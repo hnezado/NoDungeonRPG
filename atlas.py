@@ -9,8 +9,8 @@ class Atlas:
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, PrLa, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, ArPl, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, PrLa, ArPl, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, 0000, ArPl, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1111, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -26,83 +26,89 @@ class Atlas:
 		self.current_coords = ()
 		self.surrounding_coords = {}
 
-		self.check_surrounding_areas()
+		self.explore_area()
 		self.fading = {'menu': 'off', 'transition': 'off'}
 		self.opacity_counter = 0
 
-	def locate_current_area(self):
-		"""Locates the current area and saves its coordinates"""
+	def get_current_area_coords(self):
+		"""Returns the current area coordinates"""
 
-		def get_current_coords():
-			"""Loops through the tiles of the given row (used to break from both main loop and nested loop with 'return')"""
+		for row_index, row in enumerate(self.layout):
+			for col_index, area in enumerate(row):
+				if area == sett.current_game['current_map']:
+					coordinates = (row_index, col_index)
+					return coordinates
 
-			for row_index, row in enumerate(self.layout):
-				for col_index, area in enumerate(row):
-					if area == sett.current_game['current_map']:
-						coord = (row_index, col_index)
-						return coord
+	def get_surrounding_areas_coords(self):
+		"""Returns the surrounding area coordinates"""
 
-		self.current_coords = get_current_coords()
-		self.surrounding_coords = {
-				'north': (self.current_coords[0]-1, self.current_coords[1]),
-				'south': (self.current_coords[0]+1, self.current_coords[1]),
-				'west': (self.current_coords[0], self.current_coords[1]-1),
-				'east': (self.current_coords[0], self.current_coords[1]+1)}
+		return {'north': (self.current_coords[0]-1, self.current_coords[1]),
+		        'south': (self.current_coords[0]+1, self.current_coords[1]),
+		        'west': (self.current_coords[0], self.current_coords[1]-1),
+		        'east': (self.current_coords[0], self.current_coords[1]+1)}
 
-	def check_surrounding_areas(self):
-		"""Checks the surrounding areas to the current map"""
+	def set_paths(self):
+		"""Sets paths towards existent surrounding areas"""
 
-		def explore(cardinal_dir):
-			"""Returns the content of the given cardinal direction"""
-
-			return self.layout[self.surrounding_coords[cardinal_dir][0]][self.surrounding_coords[cardinal_dir][1]]
-
-		self.locate_current_area()
 		for cardinal in self.surrounding_coords.keys():
-			if type(explore(cardinal)) != int:
-				self.open_path(cardinal)
+			area = self.layout[self.surrounding_coords[cardinal][0]][self.surrounding_coords[cardinal][1]]
+			if type(area) != int:
+				if sett.current_game['current_map'].paths_opened[cardinal] is None:
+					if cardinal == 'north' or cardinal == 'south':
+						sett.current_game['current_map'].paths_opened[cardinal] = r.randint(1, 13)
+					elif cardinal == 'west' or cardinal == 'east':
+						sett.current_game['current_map'].paths_opened[cardinal] = r.randint(1, 8)
+
+	def match_paths(self):
+		"""Match the connected areas paths with the current area paths positions"""
+
+		for cardinal in self.surrounding_coords.keys():
+			connected_area = self.layout[self.surrounding_coords[cardinal][0]][self.surrounding_coords[cardinal][1]]
+			opposite_cardinal = None
+			if cardinal == 'north': opposite_cardinal = 'south'
+			elif cardinal == 'south': opposite_cardinal = 'north'
+			elif cardinal == 'west': opposite_cardinal = 'east'
+			elif cardinal == 'east': opposite_cardinal = 'west'
+
+			if type(connected_area) != int:
+				connected_area.paths_opened[opposite_cardinal] = sett.current_game['current_map'].paths_opened[cardinal]
 
 	@staticmethod
-	def open_path(cardinal, only_wider_path=False):
-		"""Opens a path towards the given cardinal direction"""
+	def open_paths():
+		"""Updates the paths and opens them if they haven't been opened yet"""
 
-		if sett.current_game['current_map'].paths_opened[cardinal] is None:
-			tile = None
-			if cardinal == 'west' or cardinal == 'east':
-				sel_tile = r.randint(1, 8)
-				if cardinal == 'west': tile = sett.current_game['current_map'].map_layout[sel_tile][0][1]
-				elif cardinal == 'east': tile = sett.current_game['current_map'].map_layout[sel_tile][-1][1]
-			elif cardinal == 'north' or cardinal == 'south':
-				sel_tile = r.randint(1, 13)
-				if cardinal == 'north':
-					tile = sett.current_game['current_map'].map_layout[0][sel_tile+1][1]
-					sett.current_game['current_map'].remove_from_map(tile)
-					tile = sett.current_game['current_map'].map_layout[0][sel_tile][1]
-				elif cardinal == 'south':
-					tile = sett.current_game['current_map'].map_layout[-1][sel_tile+1][1]
-					sett.current_game['current_map'].remove_from_map(tile)
-					tile = sett.current_game['current_map'].map_layout[-1][sel_tile][1]
-			else: raise ValueError(f'The given cardinal point is not valid')
+		for cardinal in sett.current_game['current_map'].paths_opened.keys():
+			tile_index = sett.current_game['current_map'].paths_opened[cardinal]
+			if tile_index is not None:
+				# Here is opened the path extension (only north and south paths are wide x2)
+				tile, tile_extended = None, None
+				if cardinal == 'north' or cardinal == 'south':
+					if cardinal == 'north':
+						tile = sett.current_game['current_map'].map_layout[0][tile_index]
+						tile_extended = sett.current_game['current_map'].map_layout[0][tile_index+1]
+					elif cardinal == 'south':
+						tile = sett.current_game['current_map'].map_layout[-1][tile_index]
+						tile_extended = sett.current_game['current_map'].map_layout[-1][tile_index+1]
 
-			sett.current_game['current_map'].remove_from_map(tile)
-			sett.current_game['current_map'].paths_opened[cardinal] = sel_tile
+					if tile_extended is not None and len(tile_extended) > 1:
+						sett.current_game['current_map'].remove_from_map(tile_extended[1])
 
-		# TODO intentando abrir un camino "ancho" (segundo tile eliminado) cuando hay cambio de mapa
-		# TODO para que ambos path estén a la misma altura
+				elif cardinal == 'west':
+					tile = sett.current_game['current_map'].map_layout[tile_index][0]
+				elif cardinal == 'east':
+					tile = sett.current_game['current_map'].map_layout[tile_index][-1]
 
-		if only_wider_path:
-			if cardinal == 'north': sett.current_game['current_map'].remove_from_map(
-					sett.current_game['current_map'].map_layout[0][
-						sett.current_game['current_map'].paths_opened[cardinal]+1])
-			elif cardinal == 'south': sett.current_game['current_map'].remove_from_map(
-					sett.current_game['current_map'].map_layout[-1][
-						sett.current_game['current_map'].paths_opened[cardinal]+1])
-			elif cardinal == 'west': sett.current_game['current_map'].remove_from_map(
-					sett.current_game['current_map'].map_layout[
-						sett.current_game['current_map'].paths_opened[cardinal]+1][0])
-			elif cardinal == 'east': sett.current_game['current_map'].remove_from_map(
-					sett.current_game['current_map'].map_layout[
-						sett.current_game['current_map'].paths_opened[cardinal]+1][-1])
+				if tile is not None and len(tile) > 1:
+					sett.current_game['current_map'].remove_from_map(tile[1])
+
+	def explore_area(self):
+		"""Explores the current area and its surroundings in the atlas layout (North, South, West, East)"""
+
+		self.current_coords = self.get_current_area_coords()
+		self.surrounding_coords = self.get_surrounding_areas_coords()
+		self.set_paths()
+		self.match_paths()
+		self.open_paths()
 
 	def check_transition(self):
 		"""Checks continuously the map transition (if character changes to another adjacent map)"""
@@ -186,15 +192,10 @@ class Atlas:
 	def change_map(self, cardinal):
 		"""Changes the current map to the one on the given cardinal point"""
 
-		paths_opened_buffer = sett.current_game['current_map'].paths_opened
 		sett.current_game['current_map'] = \
 			self.layout[self.surrounding_coords[cardinal][0]][self.surrounding_coords[cardinal][1]]
-		if cardinal == 'north':
-			sett.current_game['current_map'].paths_opened['south'] = paths_opened_buffer['north']
-		elif cardinal == 'south':
-			sett.current_game['current_map'].paths_opened['north'] = paths_opened_buffer['south']
 
-		self.open_path(cardinal, True)
+		self.explore_area()
 
 
 IOAtlas = Atlas()
