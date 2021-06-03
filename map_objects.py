@@ -17,6 +17,7 @@ generic_containers = []
 mobj_imgs = {
 		'null': pg.image.load('data/images/null64.png'),
 		'blank_floor': pg.image.load('data/images/blank64.png').convert_alpha(),
+		'town_floor': pg.image.load('data/images/map_objects/floors/town_floor.png').convert_alpha(),
 		'desert_floor': pg.image.load('data/images/map_objects/floors/desert_floor.png').convert_alpha(),
 		'grass_floor': pg.image.load('data/images/map_objects/floors/grass_floor.png').convert_alpha(),
 		'sand_floor1': pg.image.load('data/images/map_objects/floors/tiled/sand_floor1.png').convert_alpha(),
@@ -132,6 +133,17 @@ class BlankFloor(MapObject):
 		self.spawnable = True
 
 		self.update_mobj('map_elements', 'v_rect')
+
+
+class TownFloor(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'town_floor'
+		self.type = 'floor'
+		self.spawnable = True
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
 
 
 class DesertFloor(MapObject):

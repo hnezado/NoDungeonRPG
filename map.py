@@ -4,7 +4,7 @@ from operator import attrgetter
 CHAR = 'char_init_pos'
 
 # Floors #
-FFDe, FFPr = [DesertFloor()], [GrassFloor()]    # Full floors #
+FFTf, FFDe, FFPr = [TownFloor()], [DesertFloor()], [GrassFloor()]    # Full floors #
 FSf1, FSm1 = [SandFloor1()], [SandMound1()]     # Tiled floors #
 
 # Walls #
@@ -417,6 +417,30 @@ class Map:
 		# TODO Implement a basic weather system
 
 
+class HerdionTown(Map):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'herdion_town'
+		self.level = 1
+		self.map_elements = {'terrain': ['sand'], 'climate': ['arid']}
+		self.full_floor = FFTf
+		self.map_layout = [
+				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, CHAR, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
+				]
+
+		self.map_setting()
+
+
 class AridPlains(Map):
 	def __init__(self):
 		super().__init__()
@@ -463,7 +487,6 @@ class PrairieLands(Map):
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
-				# [Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
 				]
 		self.density_floors = 5
@@ -476,5 +499,6 @@ class PrairieLands(Map):
 
 ArPl = AridPlains()
 PrLa = PrairieLands()
+HeTo = HerdionTown()
 
-sett.current_game['current_map'] = PrLa
+sett.current_game['current_map'] = HeTo
