@@ -26,6 +26,7 @@ mobj_imgs = {
 		'wall_rock2': pg.image.load('data/images/map_objects/walls/wall_rock2.png').convert_alpha(),
 		'wall_rock3': pg.image.load('data/images/map_objects/walls/wall_rock3.png').convert_alpha(),
 		'wall_rock4': pg.image.load('data/images/map_objects/walls/wall_rock4.png').convert_alpha(),
+		'house1': pg.image.load('data/images/map_objects/decorations/house1.png').convert_alpha(),
 		'mountain2': pg.image.load('data/images/map_objects/decorations/mountain2.png').convert_alpha(),
 		'tree1': pg.image.load('data/images/map_objects/decorations/tree1.png').convert_alpha(),
 		'grassy_rock1': pg.image.load('data/images/map_objects/decorations/grassy_rock1.png').convert_alpha(),
@@ -40,6 +41,7 @@ def create_map_obj(name):
 	"""Returns a new instance of the matching provided name"""
 
 	if name == 'blank_floor': return BlankFloor()
+	elif name == 'town_floor': return TownFloor()
 	elif name == 'desert_floor': return DesertFloor()
 	elif name == 'sand_floor1': return SandFloor1()
 	elif name == 'sand_mound1': return SandMound1()
@@ -47,6 +49,7 @@ def create_map_obj(name):
 	elif name == 'wall_rock2': return WallRock2()
 	elif name == 'wall_rock3': return WallRock3()
 	elif name == 'wall_rock4': return WallRock4()
+	elif name == 'house1': return House1()
 	elif name == 'mountain2': return Mountain2()
 	elif name == 'tree1': return Tree1()
 	elif name == 'grassy_rock1': return GrassyRock1()
@@ -124,6 +127,7 @@ class MapObject:
 			else: raise ValueError(f'The provided argument "{i}" is not registered')
 
 
+### Floors ###
 class BlankFloor(MapObject):
 	def __init__(self):
 		super().__init__()
@@ -196,6 +200,7 @@ class SandMound1(MapObject):
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 
 
+### Walls ###
 class WallRock1(MapObject):
 	def __init__(self):
 		super().__init__()
@@ -248,13 +253,25 @@ class WallRock4(MapObject):
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 
 
+### Decorations ###
+class House1(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'house1'
+		self.type = 'deco'
+		self.depth = 110
+		self.given_block_rect = pg.Rect(64, 104, 200, 90)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
 class Mountain2(MapObject):
 	def __init__(self):
 		super().__init__()
 
 		self.name = 'mountain2'
 		self.type = 'deco'
-		self.map_elements = {'terrain': [], 'climate': []}
 		self.depth = 55
 		self.given_block_rect = pg.Rect(6, 37, 54, 20)
 

@@ -90,16 +90,18 @@ class Atlas:
 						tile = sett.current_game['current_map'].map_layout[-1][tile_index]
 						tile_extended = sett.current_game['current_map'].map_layout[-1][tile_index+1]
 
-					if tile_extended is not None and len(tile_extended) > 1:
-						sett.current_game['current_map'].remove_from_map(tile_extended[1])
+					if tile_extended is not None and type(tile_extended) != int:
+						if len(tile_extended) > 1:
+							sett.current_game['current_map'].remove_from_map(tile_extended[1])
 
 				elif cardinal == 'west':
 					tile = sett.current_game['current_map'].map_layout[tile_index][0]
 				elif cardinal == 'east':
 					tile = sett.current_game['current_map'].map_layout[tile_index][-1]
 
-				if tile is not None and len(tile) > 1:
-					sett.current_game['current_map'].remove_from_map(tile[1])
+				if tile is not None and type(tile) != int:
+					if len(tile) > 1:
+						sett.current_game['current_map'].remove_from_map(tile[1])
 
 	def explore_area(self):
 		"""Explores the current area and its surroundings in the atlas layout (North, South, West, East)"""

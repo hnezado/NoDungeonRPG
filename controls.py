@@ -627,7 +627,7 @@ def controls_main(event):
 		              f'in my message box so we can check the length of this text.')
 
 	if key_down(event, pg.K_y):
-		pass
+		print(sett.current_game['current_char'].visual_rect)
 
 	if key_down(event, pg.K_u):
 		if sett.current_game['current_map'] == PrLa:
