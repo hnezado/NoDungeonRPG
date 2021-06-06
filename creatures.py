@@ -28,6 +28,7 @@ class Creature:
 		self.affinities = {'terrain': [], 'climate': []}
 
 		self.pos = None
+		self.rel_pos = ()
 		self.visual_rect = None
 		self.depth = 0
 		self.given_block_rect = None

@@ -12,7 +12,8 @@ Wall = 'wall'   # Random suitable wall #
 Wwr1, Wwr2, Wwr3, Wwr4 = [WallRock1()], [WallRock2()], [WallRock3()], [WallRock4()]
 
 # Decorations #
-DHo1 = [House1()]
+DHo1, DHo2, DHo3, DHo4, DHo5, DHo6, DTow, DWel = \
+	[House1()], [House2()], [House3()], [House4()], [House5()], [House6()], [Tower()], [Well()]
 DMo2, DTr1 = [Mountain2()], [Tree1()]
 DGr1, DGr2, DGr3, DGr4 = [GrassyRock1()], [GrassyRock2()], [GrassyRock3()], [GrassyRock4()]
 
@@ -301,10 +302,16 @@ class Map:
 					tile = self.map_layout[row_index][col_index]
 					self.map_layout[row_index][col_index][0].pos = (col_index*tile_w, row_index*tile_h)
 					if len(tile) == 2:
-						self.map_layout[row_index][col_index][1].pos = (col_index*tile_w+tile_w*0.5-tile[1].visual_rect.w*0.5,
-						                                                row_index*tile_h+tile_h*0.5-tile[1].visual_rect.h*0.5)
-						if tile[1].type == 'creature': self.map_layout[row_index][col_index][1].update_cr('pos_change')
-						elif tile[1].type != 'creature': self.map_layout[row_index][col_index][1].update_mobj('pos_change')
+						if tile[1].rel_pos:
+							self.map_layout[row_index][col_index][1].pos = \
+								(col_index*tile_w+tile[1].rel_pos[0], row_index*tile_h+tile[1].rel_pos[1])
+							self.map_layout[row_index][col_index][1].depth = \
+								self.map_layout[row_index][col_index][1].pos[1]+self.map_layout[row_index][col_index][1].depth
+						else:
+							self.map_layout[row_index][col_index][1].pos = (col_index*tile_w+tile_w*0.5-tile[1].visual_rect.w*0.5,
+							                                                row_index*tile_h+tile_h*0.5-tile[1].visual_rect.h*0.5)
+							if tile[1].type == 'creature': self.map_layout[row_index][col_index][1].update_cr('pos_change')
+							elif tile[1].type != 'creature': self.map_layout[row_index][col_index][1].update_mobj('pos_change')
 
 		self.gen_floors()
 		self.detect_free_floors()
@@ -428,13 +435,13 @@ class HerdionTown(Map):
 		self.full_floor = FFTf
 		self.map_layout = [
 				# [Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
-				[DHo1, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, DHo1, 0000, 0000, 0000, DHo2, 0000, 0000, DHo3, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[DHo4, 0000, 0000, 0000, 0000, 0000, 0000, 0000, DHo5, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, 0000, 0000, 0000, 0000, DWel, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, DHo1, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, CHAR, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, DHo6, 0000, 0000, 0000, 0000, 0000, CHAR, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, 0000, 0000, 0000, 0000, DTow, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],

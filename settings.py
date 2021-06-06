@@ -49,9 +49,9 @@ info_font = 'data/fonts/germania.ttf'
 map_elements = {'terrain': ['sand', 'dirt', 'rock'], 'climate': ['arid', 'template', 'tropical', 'tundra']}
 
 # House 1 => (88, 45)       >>> Block: (64, 104) (200*90)       >>> Base: 267       >>> Size: 271*222
-# House 2 => (391, 23)      >>> Block: (999, 999) (999*999)
-# House 3 => (619, 45)
-# House 4 => (18, 179)
+# House 2 => (367, 26)
+# House 3 => (345, 45)
+# House 4 => (263, 179)
 # House 5 => (143, 367)
 # House 6 => (699, 179)
 # Tower => (575, 414)

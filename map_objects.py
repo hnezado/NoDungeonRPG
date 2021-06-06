@@ -10,7 +10,7 @@ generic_containers = []
 # 1.Create subclass itself with the required variables (self.name, self.type...)
 # 2.Add update_mobj() at the end of the new __init__() with the required update strings
 # 3.Add the class to create_mobj('instance.name')
-# 4.Create an instance if the subclass from map and give it a nickname (Fdf = [DesertFloor()])
+# 4.Create an instance if the subclass from 'map.py' and give it a nickname (Fdf = [DesertFloor()])
 
 # Depth must be at least mov_speed higher than y pos to act like a "3d block"
 
@@ -27,6 +27,13 @@ mobj_imgs = {
 		'wall_rock3': pg.image.load('data/images/map_objects/walls/wall_rock3.png').convert_alpha(),
 		'wall_rock4': pg.image.load('data/images/map_objects/walls/wall_rock4.png').convert_alpha(),
 		'house1': pg.image.load('data/images/map_objects/decorations/house1.png').convert_alpha(),
+		'house2': pg.image.load('data/images/map_objects/decorations/house2.png').convert_alpha(),
+		'house3': pg.image.load('data/images/map_objects/decorations/house3.png').convert_alpha(),
+		'house4': pg.image.load('data/images/map_objects/decorations/house4.png').convert_alpha(),
+		'house5': pg.image.load('data/images/map_objects/decorations/house5.png').convert_alpha(),
+		'house6': pg.image.load('data/images/map_objects/decorations/house6.png').convert_alpha(),
+		'tower': pg.image.load('data/images/map_objects/decorations/tower.png').convert_alpha(),
+		'well': pg.image.load('data/images/map_objects/decorations/well.png').convert_alpha(),
 		'mountain2': pg.image.load('data/images/map_objects/decorations/mountain2.png').convert_alpha(),
 		'tree1': pg.image.load('data/images/map_objects/decorations/tree1.png').convert_alpha(),
 		'grassy_rock1': pg.image.load('data/images/map_objects/decorations/grassy_rock1.png').convert_alpha(),
@@ -50,6 +57,13 @@ def create_map_obj(name):
 	elif name == 'wall_rock3': return WallRock3()
 	elif name == 'wall_rock4': return WallRock4()
 	elif name == 'house1': return House1()
+	elif name == 'house2': return House2()
+	elif name == 'house3': return House3()
+	elif name == 'house4': return House4()
+	elif name == 'house5': return House5()
+	elif name == 'house6': return House6()
+	elif name == 'tower': return Tower()
+	elif name == 'well': return Well()
 	elif name == 'mountain2': return Mountain2()
 	elif name == 'tree1': return Tree1()
 	elif name == 'grassy_rock1': return GrassyRock1()
@@ -67,6 +81,7 @@ class MapObject:
 		self.tiled = False
 		self.map_elements = {'terrain': [], 'climate': []}
 		self.pos = None
+		self.rel_pos = ()
 		self.visual_rect = None
 		self.depth = 0
 		self.spawnable = False
@@ -260,8 +275,100 @@ class House1(MapObject):
 
 		self.name = 'house1'
 		self.type = 'deco'
-		self.depth = 110
+		self.rel_pos = (24, 45)     # It wont center itself at it's base (rel_pos is the exact pos from 0,0 of the sel_tile)
+		self.depth = 194            # given_block_rect.y + given_block_rect.h (full_obj -> no transparencies)
 		self.given_block_rect = pg.Rect(64, 104, 200, 90)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class House2(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'house2'
+		self.type = 'deco'
+		self.rel_pos = (47, 23)
+		self.depth = 165
+		self.given_block_rect = pg.Rect(48, 81, 188, 84)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class House3(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'house3'
+		self.type = 'deco'
+		self.rel_pos = (33, 45)
+		self.depth = 201
+		self.given_block_rect = pg.Rect(81, 83, 231, 118)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class House4(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'house4'
+		self.type = 'deco'
+		self.rel_pos = (-115, 51)
+		self.depth = 266
+		self.given_block_rect = pg.Rect(152, 165, 208, 101)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class House5(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'house5'
+		self.type = 'deco'
+		self.rel_pos = (17, 51)
+		self.depth = 312
+		self.given_block_rect = pg.Rect(127, 194, 244, 118)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class House6(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'house6'
+		self.type = 'deco'
+		self.rel_pos = (14, 47)
+		self.depth = 199
+		self.given_block_rect = pg.Rect(83, 129, 204, 70)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class Tower(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'tower'
+		self.type = 'deco'
+		self.rel_pos = (48, 30)
+		self.depth = 186
+		self.given_block_rect = pg.Rect(143, 118, 90, 68)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class Well(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'well'
+		self.type = 'deco'
+		self.rel_pos = (7, 37)
+		self.depth = 129
+		self.given_block_rect = pg.Rect(71, 87, 81, 42)
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 
