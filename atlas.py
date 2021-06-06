@@ -12,9 +12,9 @@ class Atlas:
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, HeTo, PrLa, ArPl, 0000, 0000, 0000, 0000, 0000, 0000],
-				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, 0000, 0000, 0000, 0000, 0000, HTNW, HeTN, HTNE, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, 0000, 0000, 0000, 0000, 0000, HeTW, HeTo, HeTE, PrLa, ArPl, 0000, 0000, 0000, 0000, 0000],
+				[0000, 0000, 0000, 0000, 0000, 0000, 0000, HTSW, HeTS, HTSE, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -101,7 +101,8 @@ class Atlas:
 
 				if tile is not None and type(tile) != int:
 					if len(tile) > 1:
-						sett.current_game['current_map'].remove_from_map(tile[1])
+						if tile[1].type == 'wall':
+							sett.current_game['current_map'].remove_from_map(tile[1])
 
 	def explore_area(self):
 		"""Explores the current area and its surroundings in the atlas layout (North, South, West, East)"""
@@ -120,6 +121,8 @@ class Atlas:
 		path = sett.current_game['current_map'].paths_opened
 		if char_pos[1] < 0:
 			if path['north'] is not None:
+				sett.current_game['current_char'].move_left = False
+				sett.current_game['current_char'].move_right = False
 				if self.fading['menu'] == 'off':
 					self.fading['transition'] = 'in'
 					self.fade_bg('in', 255)
@@ -131,6 +134,8 @@ class Atlas:
 
 		elif char_pos[1]+char_rect.h*0.5 > 608:
 			if path['south'] is not None:
+				sett.current_game['current_char'].move_left = False
+				sett.current_game['current_char'].move_right = False
 				if self.fading['menu'] == 'off':
 					self.fading['transition'] = 'in'
 					self.fade_bg('in', 255)
@@ -141,6 +146,8 @@ class Atlas:
 						self.change_map('south')
 		elif char_pos[0] < 0:
 			if path['west'] is not None:
+				sett.current_game['current_char'].move_up = False
+				sett.current_game['current_char'].move_down = False
 				if self.fading['menu'] == 'off':
 					self.fading['transition'] = 'in'
 					self.fade_bg('in', 255)
@@ -151,6 +158,8 @@ class Atlas:
 						self.change_map('west')
 		elif char_pos[0]+char_rect.w > sett.disp_w:
 			if path['east'] is not None:
+				sett.current_game['current_char'].move_up = False
+				sett.current_game['current_char'].move_down = False
 				if self.fading['menu'] == 'off':
 					self.fading['transition'] = 'in'
 					self.fade_bg('in', 255)

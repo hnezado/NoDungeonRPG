@@ -20,6 +20,7 @@ mobj_imgs = {
 		'town_floor': pg.image.load('data/images/map_objects/floors/town_floor.png').convert_alpha(),
 		'desert_floor': pg.image.load('data/images/map_objects/floors/desert_floor.png').convert_alpha(),
 		'grass_floor': pg.image.load('data/images/map_objects/floors/grass_floor.png').convert_alpha(),
+		'rock_floor1': pg.image.load('data/images/map_objects/floors/tiled/rock_floor1.png').convert_alpha(),
 		'sand_floor1': pg.image.load('data/images/map_objects/floors/tiled/sand_floor1.png').convert_alpha(),
 		'sand_mound1': pg.image.load('data/images/map_objects/floors/tiled/sand_mound1.png').convert_alpha(),
 		'wall_rock1': pg.image.load('data/images/map_objects/walls/wall_rock1.png').convert_alpha(),
@@ -39,7 +40,6 @@ mobj_imgs = {
 		'grassy_rock1': pg.image.load('data/images/map_objects/decorations/grassy_rock1.png').convert_alpha(),
 		'grassy_rock2': pg.image.load('data/images/map_objects/decorations/grassy_rock2.png').convert_alpha(),
 		'grassy_rock3': pg.image.load('data/images/map_objects/decorations/grassy_rock3.png').convert_alpha(),
-		'grassy_rock4': pg.image.load('data/images/map_objects/decorations/grassy_rock4.png').convert_alpha(),
 		'chest': Sheet('data/images/map_objects/containers/chest.png', dimensions=(2, 1))
 }
 
@@ -50,6 +50,8 @@ def create_map_obj(name):
 	if name == 'blank_floor': return BlankFloor()
 	elif name == 'town_floor': return TownFloor()
 	elif name == 'desert_floor': return DesertFloor()
+	elif name == 'grass_floor': return GrassFloor()
+	elif name == 'rock_floor1': return RockFloor1()
 	elif name == 'sand_floor1': return SandFloor1()
 	elif name == 'sand_mound1': return SandMound1()
 	elif name == 'wall_rock1': return WallRock1()
@@ -69,7 +71,6 @@ def create_map_obj(name):
 	elif name == 'grassy_rock1': return GrassyRock1()
 	elif name == 'grassy_rock2': return GrassyRock2()
 	elif name == 'grassy_rock3': return GrassyRock3()
-	elif name == 'grassy_rock4': return GrassyRock4()
 	elif name == 'chest': return Chest()
 
 
@@ -184,6 +185,19 @@ class GrassFloor(MapObject):
 		self.name = 'grass_floor'
 		self.type = 'floor'
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
+		self.spawnable = True
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class RockFloor1(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'rock_floor1'
+		self.type = 'floor'
+		self.tiled = True
+		self.map_elements = {'terrain': ['dirt', 'rock'], 'climate': ['template', 'tropical', 'tundra']}
 		self.spawnable = True
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
@@ -437,17 +451,6 @@ class GrassyRock3(MapObject):
 		self.depth = 38
 
 		self.given_block_rect = pg.Rect(34, 25, 60, 36)
-
-		self.update_mobj('map_elements', 'lists', 'v_rect')
-
-
-class GrassyRock4(MapObject):
-	def __init__(self):
-		super().__init__()
-
-		self.name = 'grassy_rock4'
-		self.type = 'deco'
-		self.map_elements = {'terrain': ['dirt', 'rock'], 'climate': ['template', 'tropical', 'tundra']}
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 
