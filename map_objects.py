@@ -18,6 +18,7 @@ mobj_imgs = {
 		'null': pg.image.load('data/images/null64.png'),
 		'blank_floor': pg.image.load('data/images/blank64.png').convert_alpha(),
 		'town_floor': pg.image.load('data/images/map_objects/floors/town_floor.png').convert_alpha(),
+		'prairie_floor': pg.image.load('data/images/map_objects/floors/prairie_floor.png').convert_alpha(),
 		'desert_floor': pg.image.load('data/images/map_objects/floors/desert_floor.png').convert_alpha(),
 		'grass_floor': pg.image.load('data/images/map_objects/floors/grass_floor.png').convert_alpha(),
 		'rock_floor1': pg.image.load('data/images/map_objects/floors/tiled/rock_floor1.png').convert_alpha(),
@@ -36,7 +37,10 @@ mobj_imgs = {
 		'tower': pg.image.load('data/images/map_objects/decorations/tower.png').convert_alpha(),
 		'well': pg.image.load('data/images/map_objects/decorations/well.png').convert_alpha(),
 		'mountain2': pg.image.load('data/images/map_objects/decorations/mountain2.png').convert_alpha(),
+		'bush1': pg.image.load('data/images/map_objects/decorations/bush1.png').convert_alpha(),
+		'bush2': pg.image.load('data/images/map_objects/decorations/bush2.png').convert_alpha(),
 		'tree1': pg.image.load('data/images/map_objects/decorations/tree1.png').convert_alpha(),
+		'tree2': pg.image.load('data/images/map_objects/decorations/tree2.png').convert_alpha(),
 		'grassy_rock1': pg.image.load('data/images/map_objects/decorations/grassy_rock1.png').convert_alpha(),
 		'grassy_rock2': pg.image.load('data/images/map_objects/decorations/grassy_rock2.png').convert_alpha(),
 		'grassy_rock3': pg.image.load('data/images/map_objects/decorations/grassy_rock3.png').convert_alpha(),
@@ -49,6 +53,7 @@ def create_map_obj(name):
 
 	if name == 'blank_floor': return BlankFloor()
 	elif name == 'town_floor': return TownFloor()
+	elif name == 'prairie_floor': return PrairieFloor()
 	elif name == 'desert_floor': return DesertFloor()
 	elif name == 'grass_floor': return GrassFloor()
 	elif name == 'rock_floor1': return RockFloor1()
@@ -67,7 +72,10 @@ def create_map_obj(name):
 	elif name == 'tower': return Tower()
 	elif name == 'well': return Well()
 	elif name == 'mountain2': return Mountain2()
+	elif name == 'bush1': return Bush1()
+	elif name == 'bush2': return Bush2()
 	elif name == 'tree1': return Tree1()
+	elif name == 'tree2': return Tree2()
 	elif name == 'grassy_rock1': return GrassyRock1()
 	elif name == 'grassy_rock2': return GrassyRock2()
 	elif name == 'grassy_rock3': return GrassyRock3()
@@ -161,6 +169,18 @@ class TownFloor(MapObject):
 
 		self.name = 'town_floor'
 		self.type = 'floor'
+		self.spawnable = True
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class PrairieFloor(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'prairie_floor'
+		self.type = 'floor'
+		self.map_elements = {'terrain': ['dirt, rock'], 'climate': ['template, tropical']}
 		self.spawnable = True
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
@@ -399,6 +419,30 @@ class Mountain2(MapObject):
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 
 
+class Bush1(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'bush1'
+		self.type = 'deco'
+		self.map_elements = {'terrain': 'all', 'climate': 'all'}
+		self.depth = 64
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class Bush2(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'bush2'
+		self.type = 'deco'
+		self.map_elements = {'terrain': 'all', 'climate': 'all'}
+		self.depth = 124
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
 class Tree1(MapObject):
 	def __init__(self):
 		super().__init__()
@@ -406,9 +450,23 @@ class Tree1(MapObject):
 		self.name = 'tree1'
 		self.type = 'deco'
 		self.map_elements = {'terrain': 'all', 'climate': ['arid', 'template', 'tropical']}
-		self.depth = 118
+		self.depth = 116
 
 		self.given_block_rect = pg.Rect(86, 100, 10, 20)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class Tree2(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'tree2'
+		self.type = 'deco'
+		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
+		self.depth = 248
+
+		self.given_block_rect = pg.Rect(59, 224, 10, 22)
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 

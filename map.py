@@ -4,7 +4,7 @@ from operator import attrgetter
 CHAR = 'char_init_pos'
 
 # Floors #
-FFTf, FFDe, FFPr = [TownFloor()], [DesertFloor()], [GrassFloor()]    # Full floors #
+FFTf, FFPr, FFDe, FFGr = [TownFloor()], [PrairieFloor()], [DesertFloor()], [GrassFloor()]    # Full floors #
 FRf1, FSf1, FSm1 = [RockFloor1()], [SandFloor1()], [SandMound1()]     # Tiled floors #
 
 # Walls #
@@ -14,7 +14,8 @@ Wwr1, Wwr2, Wwr3, Wwr4 = [WallRock1()], [WallRock2()], [WallRock3()], [WallRock4
 # Decorations #
 DHo1, DHo2, DHo3, DHo4, DHo5, DHo6, DTow, DWel = \
 	[House1()], [House2()], [House3()], [House4()], [House5()], [House6()], [Tower()], [Well()]
-DMo2, DTr1 = [Mountain2()], [Tree1()]
+DMo2 = [Mountain2()]
+DBu1, DBu2, DTr1, DTr2 = [Bush1()], [Bush2()], [Tree1()], [Tree2()]
 DGr1, DGr2, DGr3 = [GrassyRock1()], [GrassyRock2()], [GrassyRock3()]
 
 # Containers #
@@ -456,7 +457,7 @@ class HerdionTownNorth(Map):
 		self.name = 'herdion_town_north'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -469,7 +470,8 @@ class HerdionTownNorth(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
+		self.density_decos = 15
 
 		self.map_setting()
 
@@ -481,7 +483,7 @@ class HerdionTownSouth(Map):
 		self.name = 'herdion_town_south'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -494,7 +496,7 @@ class HerdionTownSouth(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 
 		self.map_setting()
 
@@ -506,7 +508,7 @@ class HerdionTownWest(Map):
 		self.name = 'herdion_town_west'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],       # (16 x 10)
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -519,7 +521,7 @@ class HerdionTownWest(Map):
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 
 		self.map_setting()
 
@@ -531,7 +533,7 @@ class HerdionTownEast(Map):
 		self.name = 'herdion_town_east'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],       # (16 x 10)
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
@@ -544,7 +546,7 @@ class HerdionTownEast(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 
 		self.map_setting()
 
@@ -556,7 +558,7 @@ class HerdionTownNorthwest(Map):
 		self.name = 'herdion_town_northwest'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -569,7 +571,7 @@ class HerdionTownNorthwest(Map):
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -582,7 +584,7 @@ class HerdionTownNortheast(Map):
 		self.name = 'herdion_town_northeast'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
@@ -595,7 +597,7 @@ class HerdionTownNortheast(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -608,7 +610,7 @@ class HerdionTownSouthwest(Map):
 		self.name = 'herdion_town_southwest'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],       # (16 x 10)
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
@@ -621,7 +623,7 @@ class HerdionTownSouthwest(Map):
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -634,7 +636,7 @@ class HerdionTownSoutheast(Map):
 		self.name = 'herdion_town_southeast'
 		self.level = 1
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
-		self.full_floor = FFTf
+		self.full_floor = FFGr
 		self.map_layout = [
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],       # (16 x 10)
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
@@ -647,7 +649,7 @@ class HerdionTownSoutheast(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
 				]
-		self.density_floors = 5
+		self.density_floors = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -716,4 +718,4 @@ HeTN, HeTS, HeTW, HeTE, HTNW, HTNE, HTSW, HTSE = \
 	HerdionTownNorth(), HerdionTownSouth(), HerdionTownWest(), HerdionTownEast(), \
 	HerdionTownNorthwest(), HerdionTownNortheast(), HerdionTownSouthwest(), HerdionTownSoutheast()
 
-sett.current_game['current_map'] = HeTo
+sett.current_game['current_map'] = HeTN
