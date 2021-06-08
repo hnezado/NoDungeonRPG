@@ -16,6 +16,7 @@ DHo1, DHo2, DHo3, DHo4, DHo5, DHo6, DTow, DWel = \
 	[House1()], [House2()], [House3()], [House4()], [House5()], [House6()], [Tower()], [Well()]
 DMo2 = [Mountain2()]
 DBu1, DBu2, DTr1, DTr2 = [Bush1()], [Bush2()], [Tree1()], [Tree2()]
+DRo1 = [Rock1()]
 DGr1, DGr2, DGr3 = [GrassyRock1()], [GrassyRock2()], [GrassyRock3()]
 
 # Containers #
@@ -147,9 +148,13 @@ class Map:
 		self.free_floors.clear()
 		for row_index, row in enumerate(self.map_layout):
 			for col_index, tile in enumerate(row):
-				if type(tile) == int or (len(tile) == 1 and tile[0].type == 'floor' and tile[0].spawnable):
-					floor_pos = (row_index, col_index)
-					self.free_floors.append(floor_pos)
+				print(0 < row_index, row_index)
+				if (0 < row_index < len(self.map_layout)) and \
+						(0 < col_index < len(self.map_layout[0])):      # Not at the borders
+					print(row_index, col_index)
+					if type(tile) == int or (len(tile) == 1 and tile[0].type == 'floor' and tile[0].spawnable):
+						floor_pos = (row_index, col_index)
+						self.free_floors.append(floor_pos)
 
 	def gen_decos(self):
 		"""Generates new random decorations"""

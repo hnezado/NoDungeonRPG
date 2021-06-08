@@ -41,6 +41,7 @@ mobj_imgs = {
 		'bush2': pg.image.load('data/images/map_objects/decorations/bush2.png').convert_alpha(),
 		'tree1': pg.image.load('data/images/map_objects/decorations/tree1.png').convert_alpha(),
 		'tree2': pg.image.load('data/images/map_objects/decorations/tree2.png').convert_alpha(),
+		'rock1': pg.image.load('data/images/map_objects/decorations/rock1.png').convert_alpha(),
 		'grassy_rock1': pg.image.load('data/images/map_objects/decorations/grassy_rock1.png').convert_alpha(),
 		'grassy_rock2': pg.image.load('data/images/map_objects/decorations/grassy_rock2.png').convert_alpha(),
 		'grassy_rock3': pg.image.load('data/images/map_objects/decorations/grassy_rock3.png').convert_alpha(),
@@ -76,6 +77,7 @@ def create_map_obj(name):
 	elif name == 'bush2': return Bush2()
 	elif name == 'tree1': return Tree1()
 	elif name == 'tree2': return Tree2()
+	elif name == 'rock1': return Rock1()
 	elif name == 'grassy_rock1': return GrassyRock1()
 	elif name == 'grassy_rock2': return GrassyRock2()
 	elif name == 'grassy_rock3': return GrassyRock3()
@@ -467,6 +469,20 @@ class Tree2(MapObject):
 		self.depth = 248
 
 		self.given_block_rect = pg.Rect(59, 224, 10, 22)
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class Rock1(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'rock1'
+		self.type = 'deco'
+		self.map_elements = {'terrain': ['dirt', 'rock'], 'climate': 'all'}
+		self.depth = 48
+
+		self.given_block_rect = pg.Rect(25, 20, 75, 28)
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 
