@@ -572,10 +572,10 @@ def controls_combat(event):
 						sk_button[sk.name].pressed = True
 					if sk_button[sk.name].pressed:
 						if mouse_up(event, 1, sk_button[sk.name].rect):
-							sk_permission = sk.cast()
-							if sk_permission:
+							is_sk_possible = sk.cast()
+							if is_sk_possible:
 								IOCombat.combat_menu = 'actions'
-								IOCombat.switch_turn()
+								IOCombat.check_turn = True
 
 			if mouse_up(event, 1):
 				for sk in sett.current_game['skills']:

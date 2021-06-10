@@ -49,13 +49,12 @@ class Combat:
 		self.combat_active = False
 		self.combat_ready = False
 		self.turn = ''
+		self.check_turn = True
 		self.combat_menu = 'actions'
 		self.max_sk_per_row = 8
 		self.animation = False
 		self.cr_hp_pct, self.last_cr_hp, self.last_cr_hp_pct = 0, 0, 0
-
 		self.counter_between_actions, self.counter_end = 0, 0
-
 		self.char_damage, self.cr_damage = 0, 0
 		self.x_variation = 40
 		self.random_pos_x = r.randint(-self.x_variation, self.x_variation)
@@ -74,6 +73,7 @@ class Combat:
 			screen.blit(combat_img['combat_but_bg'], self.panel_pos)
 			self.draw_combat_buttons()
 
+			self.check_turns()
 			self.check_end_combat()
 
 	def check_cr_attitude(self):
@@ -94,20 +94,6 @@ class Combat:
 		elif sett.current_game["current_creature"] is None:
 			self.combat_ready = False
 
-		if self.combat_active:
-			self.creature_action('attack')
-
-	def draw_cr_stat_bars(self):
-		"""Compiles every creature stat bar displaying"""
-
-		# Add here and in "draw_cr_stat('stat')" any new creature stat (mana, power...)
-
-		# Updates "stats_variation" if there is a change #
-		self.check_animation()
-
-		# Displaying stat bars #
-		self.draw_cr_stat('hp')
-
 	def check_animation(self):
 		"""Checks if there is an animation in process"""
 
@@ -115,17 +101,44 @@ class Combat:
 			self.animation = True
 		elif IOGUI.last_hp_pct != IOGUI.hp_pct or IOGUI.last_mp_pct != IOGUI.mp_pct:
 			self.animation = True
-		# elif self.char_damage != 0 or self.cr_damage != 0:
-		# 	self.animation = True
+		elif self.char_damage != 0 or self.cr_damage != 0:
+			self.animation = True
 		else: self.animation = False
 
-	def draw_cr_stat(self, stat):
-		"""Displays the specified creature stat bar (while animation -> blocks actions)"""
+	def check_turns(self):
+		"""Checks whose turn is it"""
 
-		change_stat_speed = 1
-		self.cr_hp_pct = int(sett.current_game["current_creature"].crstats['health']/sett.current_game["current_creature"].crstats['max_hp']*100)
+		if self.check_turn:
+			self.check_animation()
+			if not self.animation:
+				self.set_turn()
+				self.check_turn = False
+		if self.turn == 'creature':
+			self.creature_action('attack')
 
-		if self.animation:
+	def check_actions_ready(self, who):
+		"""Checks if actions are enabled (when there are no animations)"""
+
+		if not self.animation:
+			if self.turn == who:
+				if who == 'creature':
+					if self.counter_end == 0:
+						self.counter_between_actions += 1
+						if self.counter_between_actions >= 10:
+							self.counter_between_actions = 0
+							return True
+				else:
+					return True
+
+	def draw_cr_stat_bars(self):
+		"""Compiles every creature stat bar displaying"""
+
+		def draw_cr_stat(stat):
+			"""Displays the specified creature stat bar (while animation -> blocks actions)"""
+
+			change_stat_speed = 1
+			self.cr_hp_pct = int(sett.current_game["current_creature"].crstats['health']/sett.current_game["current_creature"].crstats['max_hp']*100)
+
 			if self.last_cr_hp_pct > self.cr_hp_pct:
 				self.last_cr_hp_pct -= change_stat_speed
 				if self.last_cr_hp_pct < self.cr_hp_pct:
@@ -135,18 +148,20 @@ class Combat:
 				if self.last_cr_hp_pct > self.cr_hp_pct:
 					self.last_cr_hp_pct = self.cr_hp_pct
 
-		if stat == 'hp':
-			screen.blit(combat_img['combat_cr_bar_hp'], self.bar_cr_hp_pos,
-			            (0, 0, int(self.last_cr_hp_pct/100*combat_img['combat_cr_bar_hp'].get_width()),
-			             combat_img['combat_cr_bar_hp'].get_height()))
-			screen.blit(combat_img['combat_cr_bar_glass'], self.bar_cr_hp_pos)
+			if stat == 'hp':
+				screen.blit(combat_img['combat_cr_bar_hp'], self.bar_cr_hp_pos,
+				            (0, 0, int(self.last_cr_hp_pct/100*combat_img['combat_cr_bar_hp'].get_width()),
+				             combat_img['combat_cr_bar_hp'].get_height()))
+				screen.blit(combat_img['combat_cr_bar_glass'], self.bar_cr_hp_pos)
 
-			# Text (stat info) #
-			txt_hp_cr = text(f'{sett.current_game["current_creature"].crstats["health"]}/{sett.current_game["current_creature"].crstats["max_hp"]}',
-			                 info_font, 11)
-			txt_pos_cr = (self.bar_cr_hp_pos[0]+combat_img['combat_cr_bar_hp'].get_width()*0.5-txt_hp_cr[0].get_width()*0.5,
-			              self.bar_cr_hp_pos[1]+combat_img['combat_cr_bar_hp'].get_height()*0.5-txt_hp_cr[0].get_height()*0.5)
-			screen.blit(txt_hp_cr[0], txt_pos_cr)
+				# Text (stat info) #
+				txt_hp_cr = text(f'{sett.current_game["current_creature"].crstats["health"]}/{sett.current_game["current_creature"].crstats["max_hp"]}',
+				                 info_font, 11)
+				txt_pos_cr = (self.bar_cr_hp_pos[0]+combat_img['combat_cr_bar_hp'].get_width()*0.5-txt_hp_cr[0].get_width()*0.5,
+				              self.bar_cr_hp_pos[1]+combat_img['combat_cr_bar_hp'].get_height()*0.5-txt_hp_cr[0].get_height()*0.5)
+				screen.blit(txt_hp_cr[0], txt_pos_cr)
+
+		draw_cr_stat('hp')
 
 	def show_stat_effects(self):
 		"""Animates some actions (like attacking, healing, boosting points...)"""
@@ -229,7 +244,6 @@ class Combat:
 				self.last_cr_hp_pct = int(self.last_cr_hp/sett.current_game["current_creature"].crstats['max_hp']*100)
 				IOGUI.message(f'{sett.current_game["current_creature"].name} attacks!', 'combat')
 				self.set_combat_bg()
-				self.set_first_turn()
 			else:
 				self.end_combat('flee')
 
@@ -245,16 +259,6 @@ class Combat:
 			elif type == 'rock':
 				combat_img['combat_bg'] = combat_img['combat_bg_rock']
 
-	def set_first_turn(self):
-		"""Defines whose turn it is"""
-
-		if sett.current_game['current_char'].chstats['initiative'] > sett.current_game["current_creature"].crstats['initiative']:
-			self.turn = 'char'
-		elif sett.current_game['current_char'].chstats['initiative'] < sett.current_game["current_creature"].crstats['initiative']:
-			self.turn = 'creature'
-		else:
-			r.choice(['char', 'creature'])
-
 	def end_combat(self, reason=None):
 		"""Ends the combat"""
 
@@ -269,32 +273,18 @@ class Combat:
 			IOGUI.message(f'{sett.current_game["current_creature"].name.title()} has fled', 'combat')
 
 		sett.current_game['current_map'].remove_from_map(sett.current_game["current_creature"])
+		self.turn, self.check_turn = '', True
 		self.combat_active = False
-
-	def actions_ready(self, who):
-		"""Checks if actions are enabled (when there is no animation)"""
-
-		if self.combat_active:
-			if not self.animation:
-				if self.turn == who:
-					if who == 'creature':
-						if self.counter_end == 0:
-							self.counter_between_actions += 1
-							if self.counter_between_actions >= 10:
-								self.counter_between_actions = 0
-								return True
-					else:
-						return True
 
 	def char_action(self, action):
 		"""Defines the character action"""
 
-		if self.actions_ready('char'):
+		if self.check_actions_ready('char'):
 			if action == 'attack':
 				self.attack()
-				self.switch_turn()
+				self.check_turn = True
 			elif action == 'cast':
-				self.cast()
+				self.show_cast_menu(enabled=True)
 			elif action == 'use_item':
 				self.use_item()
 			elif action == 'retreat':
@@ -303,21 +293,20 @@ class Combat:
 	def creature_action(self, action):
 		"""Defines the character action"""
 
-		if self.actions_ready('creature'):
+		if self.check_actions_ready('creature'):
 			# if self.check_flee(based_on='hp_left'):
 			if False:
 				self.end_combat('flee')
 			else:
 				if action == 'attack':
 					self.attack()
+					self.check_turn = True
 				elif action == 'cast':
-					self.cast()
+					self.show_cast_menu()
 				elif action == 'use_item':
 					self.use_item()
 				elif action == 'retreat':
 					self.retreat()
-
-				self.switch_turn()
 
 	@staticmethod
 	def check_flee(based_on):
@@ -362,10 +351,13 @@ class Combat:
 			              f'{self.cr_damage} points of damage!', 'combat')
 			sett.current_game['current_char'].mod_stats('health', -self.cr_damage)
 
-	def cast(self):
-		"""Defines the casting action"""
+	def show_cast_menu(self, enabled):
+		"""Displays the available skill menu"""
 
-		self.show_cast_menu(enabled=True)
+		if enabled:
+			self.combat_menu = 'cast'
+		else:
+			self.combat_menu = 'actions'
 
 	@staticmethod
 	def use_item():
@@ -381,21 +373,26 @@ class Combat:
 		elif self.turn == 'creature':
 			self.end_combat('flee')
 
-	def show_cast_menu(self, enabled):
-		"""Displays the available skill menu"""
+	def set_turn(self):
+		"""Defines whose turn it is ('char' or 'creature')"""
+		def get_first_turn():
+			"""Returns 'char' or 'creature' depending on their initiative. If equal initiative: it does a random choice"""
 
-		if enabled:
-			self.combat_menu = 'cast'
-		else:
-			self.combat_menu = 'actions'
-
-	def switch_turn(self):
-		"""Switches the turn between 'char' and 'creature'"""
+			if sett.current_game['current_char'].chstats['initiative'] > sett.current_game["current_creature"].crstats[
+				'initiative']:
+				return 'char'
+			elif sett.current_game['current_char'].chstats['initiative'] <\
+					sett.current_game["current_creature"].crstats['initiative']:
+				return 'creature'
+			else:
+				return r.choice(['char', 'creature'])
 
 		if self.turn == 'char':
 			self.turn = 'creature'
 		elif self.turn == 'creature':
 			self.turn = 'char'
+		else:
+			self.turn = get_first_turn()
 
 
 IOCombat = Combat()
