@@ -30,6 +30,15 @@ class Atlas:
 		self.fading = {'menu': 'off', 'transition': 'off'}
 		self.opacity_counter = 0
 
+	def explore_area(self):
+		"""Explores the current area and its surroundings in the atlas layout (North, South, West, East)"""
+
+		self.current_coords = self.get_current_area_coords()
+		self.surrounding_coords = self.get_surrounding_areas_coords()
+		self.set_paths()
+		self.match_paths()
+		self.open_paths()
+
 	def get_current_area_coords(self):
 		"""Returns the current area coordinates"""
 
@@ -92,7 +101,8 @@ class Atlas:
 
 					if tile_extended is not None and type(tile_extended) != int:
 						if len(tile_extended) > 1:
-							sett.current_game['current_map'].remove_from_map(tile_extended[1])
+							if tile_extended[1].type == 'wall':
+								sett.current_game['current_map'].remove_from_map(tile_extended[1])
 
 				elif cardinal == 'west':
 					tile = sett.current_game['current_map'].map_layout[tile_index][0]
@@ -103,15 +113,6 @@ class Atlas:
 					if len(tile) > 1:
 						if tile[1].type == 'wall':
 							sett.current_game['current_map'].remove_from_map(tile[1])
-
-	def explore_area(self):
-		"""Explores the current area and its surroundings in the atlas layout (North, South, West, East)"""
-
-		self.current_coords = self.get_current_area_coords()
-		self.surrounding_coords = self.get_surrounding_areas_coords()
-		self.set_paths()
-		self.match_paths()
-		self.open_paths()
 
 	def check_transition(self):
 		"""Checks continuously the map transition (if character changes to another adjacent map)"""
