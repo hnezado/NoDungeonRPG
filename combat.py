@@ -53,7 +53,9 @@ class Combat:
 		self.max_sk_per_row = 8
 		self.animation = False
 		self.cr_hp_pct, self.last_cr_hp, self.last_cr_hp_pct = 0, 0, 0
+
 		self.counter_between_actions, self.counter_end = 0, 0
+
 		self.char_damage, self.cr_damage = 0, 0
 		self.x_variation = 40
 		self.random_pos_x = r.randint(-self.x_variation, self.x_variation)
@@ -68,9 +70,7 @@ class Combat:
 			screen.blit(combat_img['combat_bg'], self.win_pos)
 			screen.blit(cr_imgs_big[sett.current_game["current_creature"].name], self.cr_pos)
 			self.draw_cr_stat_bars()
-			self.show_damage()
 			self.show_stat_effects()
-
 			screen.blit(combat_img['combat_but_bg'], self.panel_pos)
 			self.draw_combat_buttons()
 
@@ -148,16 +148,11 @@ class Combat:
 			              self.bar_cr_hp_pos[1]+combat_img['combat_cr_bar_hp'].get_height()*0.5-txt_hp_cr[0].get_height()*0.5)
 			screen.blit(txt_hp_cr[0], txt_pos_cr)
 
-	@staticmethod
-	def show_stat_effects():
+	def show_stat_effects(self):
 		"""Animates some actions (like attacking, healing, boosting points...)"""
 		"""Shows stat variation animations"""
 
-		# TODO set this up with the damage, healing and other stat variations
-
-	def show_damage(self):
-		"""Displays the damage or healing in every action"""
-
+		# Damage #
 		if self.char_damage != 0:
 			pos = (self.cr_pos[0]+cr_imgs_big[sett.current_game["current_creature"].name].get_width()*0.5+self.random_pos_x,
 			       self.cr_pos[1]+cr_imgs_big[sett.current_game["current_creature"].name].get_height()*0.5)
@@ -177,6 +172,10 @@ class Combat:
 			if loop == 'end_anim':
 				self.random_pos_x = r.randint(-self.x_variation, self.x_variation)
 				self.cr_damage = 0
+
+		# TODO add healing and boosting effects
+		# Healing #
+		# Boosting #
 
 	def draw_combat_buttons(self):
 		"""Displays the combat buttons"""
@@ -222,15 +221,15 @@ class Combat:
 		"""Starts the combat"""
 
 		if not self.combat_active:
+			self.combat_active = True
+			sett.current_game['current_char'].stop_movement()
 			if not self.check_flee(based_on='first_encounter'):
 				self.cr_hp_pct = int(sett.current_game["current_creature"].crstats['health']/sett.current_game["current_creature"].crstats['max_hp']*100)
 				self.last_cr_hp = sett.current_game["current_creature"].crstats['health']
 				self.last_cr_hp_pct = int(self.last_cr_hp/sett.current_game["current_creature"].crstats['max_hp']*100)
-				sett.current_game['current_char'].stop_movement()
 				IOGUI.message(f'{sett.current_game["current_creature"].name} attacks!', 'combat')
 				self.set_combat_bg()
 				self.set_first_turn()
-				self.combat_active = True
 			else:
 				self.end_combat('flee')
 
@@ -305,8 +304,9 @@ class Combat:
 		"""Defines the character action"""
 
 		if self.actions_ready('creature'):
-			if self.check_flee(based_on='hp_left'): pass
-				# self.end_combat('flee')
+			# if self.check_flee(based_on='hp_left'):
+			if False:
+				self.end_combat('flee')
 			else:
 				if action == 'attack':
 					self.attack()
@@ -347,6 +347,8 @@ class Combat:
 
 	def attack(self):
 		"""Defines the attacking action"""
+
+		# TODO add methods on char and cr which take into account the defence to reduce the damage taken
 
 		if self.turn == 'char':
 			self.char_damage = r.randint(int(sett.current_game['current_char'].chstats['min_att']),

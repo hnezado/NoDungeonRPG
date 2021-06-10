@@ -148,10 +148,8 @@ class Map:
 		self.free_floors.clear()
 		for row_index, row in enumerate(self.map_layout):
 			for col_index, tile in enumerate(row):
-				print(0 < row_index, row_index)
-				if (0 < row_index < len(self.map_layout)) and \
-						(0 < col_index < len(self.map_layout[0])):      # Not at the borders
-					print(row_index, col_index)
+				if (1 < row_index < len(self.map_layout)-1) and \
+						(1 < col_index < len(self.map_layout[0])-1):      # Not at the borders
 					if type(tile) == int or (len(tile) == 1 and tile[0].type == 'floor' and tile[0].spawnable):
 						floor_pos = (row_index, col_index)
 						self.free_floors.append(floor_pos)
@@ -502,6 +500,7 @@ class HerdionTownSouth(Map):
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
 				]
 		self.density_floors = 15
+		self.density_decos = 15
 
 		self.map_setting()
 
@@ -527,6 +526,7 @@ class HerdionTownWest(Map):
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				]
 		self.density_floors = 15
+		self.density_decos = 15
 
 		self.map_setting()
 
@@ -552,6 +552,7 @@ class HerdionTownEast(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				]
 		self.density_floors = 15
+		self.density_decos = 15
 
 		self.map_setting()
 
@@ -569,14 +570,15 @@ class HerdionTownNorthwest(Map):
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
-				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, CrRa, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[Wall, 0000, 0000, 0000, 0000, 0000, CrRa, 0000, CrRa, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, CrRa, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000],
 				]
-		self.density_floors = 15
+		# self.density_floors = 15
+		# self.density_decos = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -603,6 +605,7 @@ class HerdionTownNortheast(Map):
 				[0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
 				]
 		self.density_floors = 15
+		self.density_decos = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -629,6 +632,7 @@ class HerdionTownSouthwest(Map):
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
 				]
 		self.density_floors = 15
+		self.density_decos = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -655,6 +659,7 @@ class HerdionTownSoutheast(Map):
 				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
 				]
 		self.density_floors = 15
+		self.density_decos = 15
 		self.density_creatures = r.randint(0, 1)
 
 		self.map_setting()
@@ -723,4 +728,4 @@ HeTN, HeTS, HeTW, HeTE, HTNW, HTNE, HTSW, HTSE = \
 	HerdionTownNorth(), HerdionTownSouth(), HerdionTownWest(), HerdionTownEast(), \
 	HerdionTownNorthwest(), HerdionTownNortheast(), HerdionTownSouthwest(), HerdionTownSoutheast()
 
-sett.current_game['current_map'] = HeTN
+sett.current_game['current_map'] = HTNW

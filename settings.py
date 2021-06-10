@@ -46,6 +46,8 @@ col_black, col_white, col_red, col_green_lime, col_blue, col_purple, col_gold, c
 info_font = 'data/fonts/germania.ttf'
 
 # Map #
+# When creating a map: 'terrain' and 'climate' can be only one element each
+# When creating a map_obj: 'terrain' or ''climate' can be more than 1 but always between [], even "['all']"
 map_elements = {'terrain': ['sand', 'dirt', 'rock'], 'climate': ['arid', 'template', 'tropical', 'tundra']}
 
 # House 1 => (88, 45)       >>> Block: (64, 104) (200*90)       >>> Base: 267       >>> Size: 271*222
