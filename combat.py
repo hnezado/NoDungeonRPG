@@ -294,8 +294,7 @@ class Combat:
 		"""Defines the character action"""
 
 		if self.check_actions_ready('creature'):
-			# if self.check_flee(based_on='hp_left'):
-			if False:
+			if self.check_flee(based_on='hp_left'):
 				self.end_combat('flee')
 			else:
 				if action == 'attack':
@@ -314,11 +313,11 @@ class Combat:
 
 		flee_modifier = 0
 		if sett.current_game["current_creature"].attitude == 'aggressive':
-			flee_modifier = 0.05
+			flee_modifier = 0.02
 		elif sett.current_game["current_creature"].attitude == 'neutral':
-			flee_modifier = 0.075
+			flee_modifier = 0.04
 		elif sett.current_game["current_creature"].attitude == 'elusive':
-			flee_modifier = 0.25
+			flee_modifier = 0.08
 
 		flee_roll = r.randint(1, 100)
 		if based_on == 'first_encounter':
@@ -331,7 +330,7 @@ class Combat:
 		elif based_on == 'hp_left':
 			hp_pct_left = int(sett.current_game["current_creature"].crstats['health']/sett.current_game["current_creature"].crstats['max_hp']*100)
 			hp_pct_off = 100-hp_pct_left
-			if flee_roll < round(hp_pct_off*flee_modifier):
+			if flee_roll < round(hp_pct_off*0.1*flee_modifier):
 				return True
 
 	def attack(self):

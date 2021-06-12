@@ -258,7 +258,7 @@ class Damage:
 	def draw_damage(dmg, pos1, surface, font, color, img=None, pos2=None):
 		"""Displays the given damage animation in the given starting pos"""
 
-		damage = text(txt=dmg, font_style=font, font_size=25, color=color)[0]
+		damage = text(txt=dmg, font_style=font, font_size=35, color=color)[0]
 		pos_num = damage.get_rect(center=pos1)
 		pos_num[1] += Damage.counter_num-Damage.movement_pos_limit
 
