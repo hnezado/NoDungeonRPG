@@ -76,10 +76,11 @@ def refresh_controls():
 		IOCombat.button_back.pressed = False
 
 
+title = text(txt='No Dungeon RPG', font_style=info_font, font_size=35, color=col_green)[0]
 def intro():
 	"""Defines the intro"""
 
-	pass
+	screen.blit(title, (0, 0))
 
 
 def main_menu():
@@ -109,7 +110,7 @@ def main():
 
 		intro()
 		main_menu()
-		game()
+		# game()
 
 		IOGUI.draw_cursor()
 
