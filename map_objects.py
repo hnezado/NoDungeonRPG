@@ -21,6 +21,8 @@ mobj_imgs = {
 		'prairie_floor': pg.image.load('data/images/map_objects/floors/prairie_floor.png').convert_alpha(),
 		'desert_floor': pg.image.load('data/images/map_objects/floors/desert_floor.png').convert_alpha(),
 		'grass_floor': pg.image.load('data/images/map_objects/floors/grass_floor.png').convert_alpha(),
+		'snowy_floor': pg.image.load('data/images/map_objects/floors/snowy_floor.png').convert_alpha(),
+		'icy_floor': pg.image.load('data/images/map_objects/floors/icy_floor.png').convert_alpha(),
 		'rock_floor1': pg.image.load('data/images/map_objects/floors/tiled/rock_floor1.png').convert_alpha(),
 		'sand_floor1': pg.image.load('data/images/map_objects/floors/tiled/sand_floor1.png').convert_alpha(),
 		'sand_mound1': pg.image.load('data/images/map_objects/floors/tiled/sand_mound1.png').convert_alpha(),
@@ -57,6 +59,8 @@ def create_map_obj(name):
 	elif name == 'prairie_floor': return PrairieFloor()
 	elif name == 'desert_floor': return DesertFloor()
 	elif name == 'grass_floor': return GrassFloor()
+	elif name == 'snowy_floor': return SnowyFloor()
+	elif name == 'icy_floor': return SnowyFloor()
 	elif name == 'rock_floor1': return RockFloor1()
 	elif name == 'sand_floor1': return SandFloor1()
 	elif name == 'sand_mound1': return SandMound1()
@@ -207,6 +211,30 @@ class GrassFloor(MapObject):
 		self.name = 'grass_floor'
 		self.type = 'floor'
 		self.map_elements = {'terrain': ['dirt'], 'climate': ['template']}
+		self.spawnable = True
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class SnowyFloor(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'snowy_floor'
+		self.type = 'floor'
+		self.map_elements = {'terrain': ['dirt'], 'climate': ['tundra']}
+		self.spawnable = True
+
+		self.update_mobj('map_elements', 'lists', 'v_rect')
+
+
+class IcyFloor(MapObject):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'icy_floor'
+		self.type = 'floor'
+		self.map_elements = {'terrain': ['rock'], 'climate': ['tundra']}
 		self.spawnable = True
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')

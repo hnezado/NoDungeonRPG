@@ -108,9 +108,9 @@ def main():
 		for event in pg.event.get():
 			controls_main(event)
 
-		intro()
+		# intro()
 		main_menu()
-		# game()
+		game()
 
 		IOGUI.draw_cursor()
 

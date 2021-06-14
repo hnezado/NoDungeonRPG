@@ -4,8 +4,11 @@ from operator import attrgetter
 CHAR = 'char_init_pos'
 
 # Floors #
-FFTf, FFPr, FFDe, FFGr = [TownFloor()], [PrairieFloor()], [DesertFloor()], [GrassFloor()]    # Full floors #
-FRf1, FSf1, FSm1 = [RockFloor1()], [SandFloor1()], [SandMound1()]     # Tiled floors #
+## Full floors ##
+FFTf, FFPr, FFDe, FFGr, FFSn, FFIc = [TownFloor()], [PrairieFloor()], [DesertFloor()], [GrassFloor()], [SnowyFloor()], \
+                                     [IcyFloor()]
+## Tiled floors ##
+FRf1, FSf1, FSm1 = [RockFloor1()], [SandFloor1()], [SandMound1()]
 
 # Walls #
 Wall = 'wall'   # Random suitable wall #
@@ -721,8 +724,66 @@ class PrairieLands(Map):
 		self.map_setting()
 
 
+class ColdPlateau(Map):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'ice_lands'
+		self.level = 7
+		self.map_elements = {'terrain': ['dirt'], 'climate': ['tundra']}
+		self.full_floor = FFSn
+		self.map_layout = [
+				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
+				]
+		self.density_floors = 5
+		self.density_decos = 2
+		self.density_containers = 2
+		self.density_creatures = 5
+
+		self.map_setting()
+
+
+class FrozenLake(Map):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'frozen_lake'
+		self.level = 8
+		self.map_elements = {'terrain': ['rock'], 'climate': ['tundra']}
+		self.full_floor = FFIc
+		self.map_layout = [
+				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],       # (16 x 10)
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, Wall],
+				[Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
+				]
+		self.density_floors = 5
+		self.density_decos = 2
+		self.density_containers = 2
+		self.density_creatures = 5
+
+		self.map_setting()
+
+
 ArPl = AridPlains()
 PrLa = PrairieLands()
+CoPl = ColdPlateau()
+FrLa = FrozenLake()
 HeTo = HerdionTown()
 HeTN, HeTS, HeTW, HeTE, HTNW, HTNE, HTSW, HTSE = \
 	HerdionTownNorth(), HerdionTownSouth(), HerdionTownWest(), HerdionTownEast(), \
