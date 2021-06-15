@@ -8,7 +8,7 @@ from uuid import uuid4
 pg.init()
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-pg.display.set_caption('DungeON')
+pg.display.set_caption('NoDungeonRPG')
 disp_w, disp_h = 1024, 768
 screen = pg.display.set_mode([disp_w, disp_h])
 default_clock = 60

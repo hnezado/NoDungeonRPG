@@ -13,7 +13,6 @@ generic_containers = []
 # 4.Create an instance if the subclass from 'map.py' and give it a nickname (Fdf = [DesertFloor()])
 
 # Depth must be at least mov_speed higher than y pos to act like a "3d block"
-
 mobj_imgs = {
 		'null': pg.image.load('data/images/null64.png'),
 		'blank_floor': pg.image.load('data/images/blank64.png').convert_alpha(),

@@ -28,7 +28,6 @@
 # Cruxer parts are found along the story. They can be combined to obtain the full device (It may require some knowledge)
 # The Cruxer can be upgraded somehow to divide or combine more complex crux.
 
-
 from controls import *
 
 # gen_item(iclass='ragged_bandana', iqual='unique').pick_item()

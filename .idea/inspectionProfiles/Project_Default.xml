@@ -19,6 +19,7 @@
       <option name="ignoredNames">
         <list>
           <option value="type" />
+          <option value="sum" />
         </list>
       </option>
     </inspection_tool>
