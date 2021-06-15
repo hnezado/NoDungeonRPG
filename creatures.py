@@ -4,12 +4,14 @@ generic_creatures = []
 
 cr_imgs = {
 		'rat': pg.image.load('data/images/creatures/rat.png').convert_alpha(),
-		'snake': pg.image.load('data/images/creatures/snake.png').convert_alpha()
+		'snake': pg.image.load('data/images/creatures/snake.png').convert_alpha(),
+		'yeti': pg.image.load('data/images/creatures/yeti.png').convert_alpha()
 }
 
 cr_imgs_big = {
 		'rat': pg.image.load('data/images/creatures/big/big_rat.png').convert_alpha(),
-		'snake': pg.image.load('data/images/creatures/big/big_snake.png').convert_alpha()
+		'snake': pg.image.load('data/images/creatures/big/big_snake.png').convert_alpha(),
+		'yeti': pg.image.load('data/images/creatures/big/big_yeti.png').convert_alpha()
 }
 
 
@@ -18,6 +20,7 @@ def create_creature(name):
 
 	if name == 'rat': return Rat()
 	elif name == 'snake': return Snake()
+	elif name == 'yeti': return Yeti()
 
 
 class Creature:
@@ -171,6 +174,26 @@ class Snake(Creature):
 		self.base_stats['max_hp'] = r.randint(1, 2)
 		self.base_stats['min_att'] = 2
 		self.base_stats['max_att'] = 4
+		self.base_stats['initiative'] = 3
+
+		self.update_cr('lists', 'v_rect')
+
+
+class Yeti(Creature):
+	def __init__(self):
+		super().__init__()
+
+		self.name = 'yeti'
+
+		self.depth = 24
+		self.given_block_rect = pg.Rect(4, 17, 30, 24)
+
+		self.attitude = 'aggressive'
+		self.affinities = {'terrain': ['rock'], 'climate': ['tundra']}
+
+		self.base_stats['max_hp'] = r.randint(20, 50)
+		self.base_stats['min_att'] = 12
+		self.base_stats['max_att'] = 22
 		self.base_stats['initiative'] = 3
 
 		self.update_cr('lists', 'v_rect')

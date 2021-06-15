@@ -26,7 +26,7 @@ DGr1, DGr2, DGr3 = [GrassyRock1()], [GrassyRock2()], [GrassyRock3()]
 CoCh = [Chest()]
 
 # Creatures #
-CrRa, CrSn = [Rat()], [Snake()]
+CrRa, CrSn, CrYe = [Rat()], [Snake()], [Yeti()]
 
 
 class Map:
@@ -789,4 +789,4 @@ HeTN, HeTS, HeTW, HeTE, HTNW, HTNE, HTSW, HTSE = \
 	HerdionTownNorth(), HerdionTownSouth(), HerdionTownWest(), HerdionTownEast(), \
 	HerdionTownNorthwest(), HerdionTownNortheast(), HerdionTownSouthwest(), HerdionTownSoutheast()
 
-sett.current_game['current_map'] = HeTo
+sett.current_game['current_map'] = FrLa
