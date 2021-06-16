@@ -17,6 +17,7 @@ cursor = 'data/images/gui/cursor24.png'
 mouse_pos = (0, 0)
 tile_w, tile_h = 64, 64
 
+game_on = False
 current_game = {
 		'date_time': None,
 		'settings': {'sound_active': True, 'gui_bg_option': 1},
@@ -48,7 +49,8 @@ info_font = 'data/fonts/germania.ttf'
 # Map #
 # When creating a map: 'terrain' and 'climate' can be only one element each
 # When creating a map_obj: 'terrain' or ''climate' can be more than 1 but always between [], even "['all']"
-map_elements = {'terrain': ['sand', 'dirt', 'rock'], 'climate': ['arid', 'template', 'tropical', 'tundra']}
+map_elements = {'terrain': ['sand', 'dirt', 'rock', 'snow', 'ice'],
+                'climate': ['arid', 'template', 'tropical', 'tundra']}
 
 # House 1 => (88, 45)       >>> Block: (64, 104) (200*90)       >>> Base: 267       >>> Size: 271*222
 # House 2 => (367, 26)

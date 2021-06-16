@@ -185,11 +185,11 @@ class Yeti(Creature):
 
 		self.name = 'yeti'
 
-		self.depth = 24
-		self.given_block_rect = pg.Rect(4, 17, 30, 24)
+		self.depth = 65
+		self.given_block_rect = pg.Rect(22, 52, 80, 55)
 
 		self.attitude = 'aggressive'
-		self.affinities = {'terrain': ['rock'], 'climate': ['tundra']}
+		self.affinities = {'terrain': ['snow'], 'climate': ['tundra']}
 
 		self.base_stats['max_hp'] = r.randint(20, 50)
 		self.base_stats['min_att'] = 12

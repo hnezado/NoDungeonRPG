@@ -29,6 +29,7 @@
 # The Cruxer can be upgraded somehow to divide or combine more complex crux.
 
 from controls import *
+from main_menu import *
 
 # gen_item(iclass='ragged_bandana', iqual='unique').pick_item()
 # gen_item(iclass='fist_knife', iqual='rare').equip()
@@ -52,7 +53,7 @@ def refresh_controls():
 		IOLootCombat.move_win_pressed = False
 		IOLootContainer.close_pressed = False
 		IOLootContainer.move_win_pressed = False
-		IOMainMenuButton.pressed = False
+		IOIngameMenuButton.pressed = False
 		IOGUI.menu_but['resume'].pressed = False
 		IOGUI.menu_but['save'].pressed = False
 		IOGUI.menu_but['load'].pressed = False
@@ -75,27 +76,21 @@ def refresh_controls():
 		IOCombat.button_back.pressed = False
 
 
-title = text(txt='No Dungeon RPG', font_style=info_font, font_size=35, color=col_green)[0]
-def intro():
-	"""Defines the intro"""
-
-	screen.blit(title, (0, 0))
-
-
 def main_menu():
-	"""Defines the main menu"""
+	"""Displays the main menu"""
 
-	pass
+	IOMainMenu.draw_main_menu()
 
 
 def game():
-	"""Defines the in-game screen"""
+	"""Displays every ingame element on the screen"""
 
-	sett.current_game['current_map'].draw_map()
-	IOGUI.draw_gui()
-	IOCombat.draw_combat()
-	IOGUI.draw_menu()
-	IOAtlas.check_transition()
+	if sett.game_on:
+		sett.current_game['current_map'].draw_map()
+		IOGUI.draw_gui()
+		# IOCombat.draw_combat()
+		IOGUI.draw_ingame_menu()
+		IOAtlas.check_transition()
 
 
 def main():
@@ -107,7 +102,6 @@ def main():
 		for event in pg.event.get():
 			controls_main(event)
 
-		# intro()
 		main_menu()
 		game()
 

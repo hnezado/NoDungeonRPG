@@ -216,11 +216,11 @@ def controls_gui(event):
 		controls_inv(event)
 		controls_loot(event)
 
-	if mouse_down(event, 1, IOMainMenuButton.rect):
-		IOMainMenuButton.pressed = True
+	if mouse_down(event, 1, IOIngameMenuButton.rect):
+		IOIngameMenuButton.pressed = True
 
-	if IOMainMenuButton.pressed:
-		if mouse_up(event, 1, IOMainMenuButton.rect):
+	if IOIngameMenuButton.pressed:
+		if mouse_up(event, 1, IOIngameMenuButton.rect):
 			if sett.active_screen != 'menu':
 				IOGUI.menu('open')
 			elif sett.active_screen == 'menu':

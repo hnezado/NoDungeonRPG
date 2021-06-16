@@ -241,8 +241,8 @@ class GraphicalUserInterface:
 				if sett.current_game['previous_container'] is not None:
 					sett.current_game['previous_container'].opened = False
 
-	def draw_menu(self):
-		"""Displays the menu if opened"""
+	def draw_ingame_menu(self):
+		"""Displays the ingame menu if opened"""
 
 		if self.menu_active:
 			sett.current_game['current_char'].stop_movement()
@@ -250,7 +250,7 @@ class GraphicalUserInterface:
 			IOAtlas.fading['menu'] = 'in'
 			if IOAtlas.opacity_counter >= 200:
 				IOAtlas.fading['menu'] = 'out'
-			IOMainMenuButton.draw_button()
+			IOIngameMenuButton.draw_button()
 			screen.blit(self.img_menu_bg, self.menu_pos)
 			self.draw_menu_buttons()
 		else:
@@ -258,7 +258,7 @@ class GraphicalUserInterface:
 				IOAtlas.fade_bg('out')
 				if IOAtlas.opacity_counter <= 0:
 					IOAtlas.fading['menu'] = 'off'
-			IOMainMenuButton.draw_button()
+			IOIngameMenuButton.draw_button()
 
 	def draw_menu_buttons(self):
 		"""Displays the menu buttons"""
@@ -849,7 +849,7 @@ class GraphicalUserInterface:
 
 
 IOGUI = GraphicalUserInterface()
-IOMainMenuButton = Button(screen, icon=IOGUI.img_but_main_menu, pos=(850, 694),
+IOIngameMenuButton = Button(screen, icon=IOGUI.img_but_main_menu, pos=(850, 694),
                           displace_pressed=(0, 0), icon_pressed_custom=True)
 
 
