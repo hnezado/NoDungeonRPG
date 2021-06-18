@@ -17,7 +17,6 @@ cursor = 'data/images/gui/cursor24.png'
 mouse_pos = (0, 0)
 tile_w, tile_h = 64, 64
 
-game_on = False
 current_game = {
 		'date_time': None,
 		'settings': {'sound_active': True, 'gui_bg_option': 1},
@@ -34,7 +33,7 @@ current_game = {
 
 save_sockets = {'save_game1': None, 'save_game2': None, 'save_game3': None, 'save_game4': None}
 
-active_screen = 'game'
+active_screen = 'main_menu'
 focused_gui_win = None
 
 # Colors RGB #

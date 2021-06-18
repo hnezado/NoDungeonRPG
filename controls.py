@@ -1,19 +1,139 @@
-from combat import *
+import pygame
+
+from main_menu import *
+
+
+def controls_confirm_win(event):
+	"""Defines the confirmation window interaction"""
+
+	if IOConfirmWindow.type == 'main_menu':
+		if mouse_down(event, 1, IOConfirmWindow.buttons['accept'].rect):
+			IOConfirmWindow.buttons['accept'].pressed = True
+		if mouse_up(event, 1, IOConfirmWindow.buttons['accept'].rect):
+			IOConfirmWindow.buttons['accept'].pressed = False
+			IOGUI.menu_active = False
+			sett.active_screen = 'main_menu'
+			IOConfirmWindow.active_win = False
+
+		elif mouse_down(event, 1, IOConfirmWindow.buttons['cancel'].rect):
+			IOConfirmWindow.buttons['cancel'].pressed = True
+		if mouse_up(event, 1, IOConfirmWindow.buttons['cancel'].rect):
+			IOConfirmWindow.buttons['cancel'].pressed = False
+			IOConfirmWindow.active_win = False
+
+		if key_down(event, pg.K_RETURN):
+			IOGUI.menu_active = False
+			sett.active_screen = 'main_menu'
+			IOConfirmWindow.active_win = False
+
+	elif IOConfirmWindow.type == 'quit':
+		if mouse_down(event, 1, IOConfirmWindow.buttons['accept'].rect):
+			IOConfirmWindow.buttons['accept'].pressed = True
+		if mouse_up(event, 1, IOConfirmWindow.buttons['accept'].rect):
+			IOConfirmWindow.buttons['accept'].pressed = False
+			pg.quit()
+			quit()
+
+		elif mouse_down(event, 1, IOConfirmWindow.buttons['cancel'].rect):
+			IOConfirmWindow.buttons['cancel'].pressed = True
+		if mouse_up(event, 1, IOConfirmWindow.buttons['cancel'].rect):
+			IOConfirmWindow.buttons['cancel'].pressed = False
+			IOConfirmWindow.active_win = False
+
+		if key_down(event, pg.K_RETURN):
+			IOConfirmWindow.active_win = False
+			pg.quit()
+			quit()
+
+	if key_down(event, pg.K_ESCAPE):
+		IOConfirmWindow.active_win = False
+
+	if mouse_up(event, 1):
+		for button in IOConfirmWindow.buttons.keys():
+			IOConfirmWindow.buttons[button].pressed = False
+
+
+def controls_main_menu(event):
+	"""Defines the main menu interaction"""
+
+	if sett.active_screen == 'main_menu':
+		if mouse_down(event, 1, IOMainMenu.buttons['continue'].rect):
+			IOMainMenu.buttons['continue'].pressed = True
+		if IOMainMenu.buttons['continue'].pressed:
+			if mouse_up(event, 1, IOMainMenu.buttons['continue'].rect):
+				# sett.active_screen = 'game'
+				IOGUI.menu_layer = 'load'
+				IOGUI.menu_active = True
+
+		if mouse_down(event, 1, IOMainMenu.buttons['new_game'].rect):
+			IOMainMenu.buttons['new_game'].pressed = True
+		if IOMainMenu.buttons['new_game'].pressed:
+			if mouse_up(event, 1, IOMainMenu.buttons['new_game'].rect):
+				IOMainMenu.new_game()
+				sett.active_screen = 'game'
+
+		if mouse_down(event, 1, IOMainMenu.buttons['settings'].rect):
+			IOMainMenu.buttons['settings'].pressed = True
+		if IOMainMenu.buttons['settings'].pressed:
+			if mouse_up(event, 1, IOMainMenu.buttons['settings'].rect):
+				IOGUI.menu_layer = 'settings'
+				IOGUI.menu_active = True
+
+		if mouse_down(event, 1, IOMainMenu.buttons['quit'].rect):
+			IOMainMenu.buttons['quit'].pressed = True
+		if IOMainMenu.buttons['quit'].pressed:
+			if mouse_up(event, 1, IOMainMenu.buttons['quit'].rect):
+				IOConfirmWindow.set_msg('quit')
+				IOConfirmWindow.active_win = True
+
+		# Menu buttons interaction #
+		if IOGUI.menu_active:
+
+			if IOGUI.menu_layer == 'load':
+				for socket in IOGUI.menu_but['save_game_buttons'].keys():
+					if mouse_down(event, 1, IOGUI.menu_but['load_game_buttons'][socket]):
+						IOGUI.menu_but['load_game_buttons'][socket].pressed = True
+					if IOGUI.menu_but['load_game_buttons'][socket].pressed:
+						if mouse_up(event, 1, IOGUI.menu_but['load_game_buttons'][socket]):
+							if sett.save_sockets[socket] is not None:
+								IOGUI.menu_layer = 'main'
+								IOGUI.menu_active = False
+								IOGUI.menu('load_game', socket)
+								IOItem.refresh_surfaces()
+								# sett.active_screen = 'game'
+
+			if IOGUI.menu_layer == 'settings':
+				pass
+
+			if IOMouseHover.mouse_hover(sett.mouse_pos, IOGUI.menu_but['back'].rect):
+				IOGUI.menu_but['back'].hovering = True
+			else: IOGUI.menu_but['back'].hovering = False
+			if mouse_down(event, 1, IOGUI.menu_but['back']): IOGUI.menu_but['back'].pressed = True
+			if IOGUI.menu_but['back'].pressed:
+				if mouse_up(event, 1, IOGUI.menu_but['back']):
+					IOGUI.menu_layer = 'main'
+					IOGUI.menu_active = False
+
+		if mouse_up(event, 1):
+			for button in IOMainMenu.buttons.keys():
+				IOMainMenu.buttons[button].pressed = False
+			for button in IOGUI.menu_but.keys():
+				if type(IOGUI.menu_but[button]) != dict:
+					IOGUI.menu_but[button].pressed = False
 
 
 def controls_char(event):
 	"""Defines the character movement controls"""
 
 	if sett.active_screen == 'game':
-		if not IOCombat.combat_active:
-			if key_down(event, pg.K_UP) or key_down(event, pg.K_w):
-				sett.current_game['current_char'].move_up = True
-			elif key_down(event, pg.K_DOWN) or key_down(event, pg.K_s):
-				sett.current_game['current_char'].move_down = True
-			elif key_down(event, pg.K_LEFT) or key_down(event, pg.K_a):
-				sett.current_game['current_char'].move_left = True
-			elif key_down(event, pg.K_RIGHT) or key_down(event, pg.K_d):
-				sett.current_game['current_char'].move_right = True
+		if key_down(event, pg.K_UP) or key_down(event, pg.K_w):
+			sett.current_game['current_char'].move_up = True
+		elif key_down(event, pg.K_DOWN) or key_down(event, pg.K_s):
+			sett.current_game['current_char'].move_down = True
+		elif key_down(event, pg.K_LEFT) or key_down(event, pg.K_a):
+			sett.current_game['current_char'].move_left = True
+		elif key_down(event, pg.K_RIGHT) or key_down(event, pg.K_d):
+			sett.current_game['current_char'].move_right = True
 
 	if IOAtlas.fading['transition'] != 'in':
 		if key_up(event, pg.K_UP) or key_up(event, pg.K_w):
@@ -52,7 +172,6 @@ def controls_equ(event):
 	"""Defines the interaction with the equipment window"""
 
 	if sett.active_screen == 'game':
-
 		if IOEqu.active_window:
 
 			# GUI button #
@@ -101,7 +220,6 @@ def controls_inv(event):
 	"""Defines the interaction with the inventory window"""
 
 	if sett.active_screen == 'game':
-
 		if IOInv.active_window:
 
 			# GUI button #
@@ -149,7 +267,6 @@ def controls_loot(event):
 	"""Defines the interaction with the loot window"""
 
 	if sett.active_screen == 'game':
-
 		# Combat container #
 		if IOLootCombat.active_window:
 			if IOLootCombat.focused_window:
@@ -203,41 +320,43 @@ def controls_gui(event):
 	"""Defines the GUI interactions"""
 
 	if sett.active_screen == 'game':
-		# Focus window #
-		for window in opened_windows:
-			if mouse_down(event, 1, window.rect):
-				window.focus_window()
-				break
-			elif mouse_down(event, 3, window.rect):
-				window.focus_window()
-				break
+		if not IOGUI.menu_active and not IOCombat.combat_active:
 
-		controls_equ(event)
-		controls_inv(event)
-		controls_loot(event)
+			# Focus window #
+			for window in opened_windows:
+				if mouse_down(event, 1, window.rect):
+					window.focus_window()
+					break
+				elif mouse_down(event, 3, window.rect):
+					window.focus_window()
+					break
 
-	if mouse_down(event, 1, IOIngameMenuButton.rect):
-		IOIngameMenuButton.pressed = True
+			controls_equ(event)
+			controls_inv(event)
+			controls_loot(event)
 
-	if IOIngameMenuButton.pressed:
-		if mouse_up(event, 1, IOIngameMenuButton.rect):
-			if sett.active_screen != 'menu':
-				IOGUI.menu('open')
-			elif sett.active_screen == 'menu':
+		if mouse_down(event, 1, IOGUI.ingame_menu_button.rect):
+			IOGUI.ingame_menu_button.pressed = True
+
+		if IOGUI.ingame_menu_button.pressed:
+			if mouse_up(event, 1, IOGUI.ingame_menu_button.rect):
+				if not IOGUI.menu_active:
+					IOGUI.menu('open')
+				elif IOGUI.menu_active:
+					IOGUI.menu('close')
+
+		if key_down(event, pg.K_ESCAPE):
+			if not IOGUI.menu_active:
+				if len(opened_windows) == 0:
+					IOGUI.menu('open')
+			elif IOGUI.menu_active:
 				IOGUI.menu('close')
 
-	if key_down(event, pg.K_ESCAPE):
-		if sett.active_screen == 'game':
-			if len(opened_windows) == 0:
-				IOGUI.menu('open')
-		elif sett.active_screen == 'menu':
-			IOGUI.menu('close')
 
+def controls_ingame_menu(event):
+	"""Defines the ingame menu interactions"""
 
-def controls_menu(event):
-	"""Defines the menu interactions"""
-
-	if sett.active_screen == 'menu':
+	if sett.active_screen == 'game':
 		if IOGUI.menu_active:
 
 			# Main layer #
@@ -254,9 +373,9 @@ def controls_menu(event):
 				if IOMouseHover.mouse_hover(sett.mouse_pos, IOGUI.menu_but['settings'].rect):
 					IOGUI.menu_but['settings'].hovering = True
 				else: IOGUI.menu_but['settings'].hovering = False
-				if IOMouseHover.mouse_hover(sett.mouse_pos, IOGUI.menu_but['quit'].rect):
-					IOGUI.menu_but['quit'].hovering = True
-				else: IOGUI.menu_but['quit'].hovering = False
+				if IOMouseHover.mouse_hover(sett.mouse_pos, IOGUI.menu_but['main_menu'].rect):
+					IOGUI.menu_but['main_menu'].hovering = True
+				else: IOGUI.menu_but['main_menu'].hovering = False
 
 				if mouse_down(event, 1, IOGUI.menu_but['resume']): IOGUI.menu_but['resume'].pressed = True
 				if IOGUI.menu_but['resume'].pressed:
@@ -274,10 +393,12 @@ def controls_menu(event):
 				if IOGUI.menu_but['settings'].pressed:
 					if mouse_up(event, 1, IOGUI.menu_but['settings']):
 						IOGUI.menu('settings')
-				if mouse_down(event, 1, IOGUI.menu_but['quit']): IOGUI.menu_but['quit'].pressed = True
-				if IOGUI.menu_but['quit'].pressed:
-					if mouse_up(event, 1, IOGUI.menu_but['quit']):
-						IOGUI.menu('quit')
+				if mouse_down(event, 1, IOGUI.menu_but['main_menu']): IOGUI.menu_but['main_menu'].pressed = True
+				if IOGUI.menu_but['main_menu'].pressed:
+					if mouse_up(event, 1, IOGUI.menu_but['main_menu']):
+						IOConfirmWindow.set_msg('main_menu')
+						IOConfirmWindow.active_win = True
+						# IOGUI.menu('main_menu')
 
 			# Save layer #
 			elif IOGUI.menu_layer == 'save':
@@ -365,150 +486,144 @@ def controls_meditation(event):
 	"""Defines the meditation rect interaction"""
 
 	if sett.active_screen == 'game':
-		# Spirit bar #
-		if sett.current_game['current_char'].meditation_ready:
-			if mouse_down(event, 1, IOGUI.stat_rects['meditation']):
-				if IOCombat.combat_active:
-					IOGUI.message(f"I can't meditate right now. it's not safe!", type='thought')
-				else:
-					IOGUI.message('I can feel very relaxed now...', type='thought')
-					meditation = sett.current_game['current_char'].meditation()
-					if meditation is not None:
-						[IOGUI.message(f'{stat.title()} has been upgraded!') for stat in meditation]
+			# Spirit bar #
+			if sett.current_game['current_char'].meditation_ready:
+				if mouse_down(event, 1, IOGUI.stat_rects['meditation']):
+					if IOCombat.combat_active:
+						IOGUI.message(f"I can't meditate right now. it's not safe!", type='thought')
+					else:
+						IOGUI.message('I can feel very relaxed now...', type='thought')
+						meditation = sett.current_game['current_char'].meditation()
+						if meditation is not None:
+							[IOGUI.message(f'{stat.title()} has been upgraded!') for stat in meditation]
 
 
 # Item movement controls #
 def equ_item_mov(event):
 	"""Defines the item movement in the equipment window"""
 
-	if sett.active_screen == 'game':
-		if not IOCombat.combat_active:
-			if IOEqu.focused_window:
-				if mouse_down(event, 1, IOEqu.equ_rects, multiple_rect=True):
-					IOItem.cell_pressed = check_cell_rect(event, 1, IOEqu.equ_rects)
-					cell_status = sett.current_game['equipped'][IOItem.cell_pressed]
-					if IOGUI.item_on_cursor is None:
-						if cell_status is not None:
-							IOItem.item_drag = True
-							sett.current_game['equipped'][IOItem.cell_pressed].unequip(to='cursor')
+	if IOEqu.focused_window:
+		if mouse_down(event, 1, IOEqu.equ_rects, multiple_rect=True):
+			IOItem.cell_pressed = check_cell_rect(event, 1, IOEqu.equ_rects)
+			cell_status = sett.current_game['equipped'][IOItem.cell_pressed]
+			if IOGUI.item_on_cursor is None:
+				if cell_status is not None:
+					IOItem.item_drag = True
+					sett.current_game['equipped'][IOItem.cell_pressed].unequip(to='cursor')
+			else:
+				if IOGUI.item_on_cursor.itype == IOItem.cell_pressed:
+					if cell_status is None:
+						IOGUI.item_on_cursor.equip(frm='cursor')
 					else:
-						if IOGUI.item_on_cursor.itype == IOItem.cell_pressed:
-							if cell_status is None:
-								IOGUI.item_on_cursor.equip(frm='cursor')
-							else:
-								cell_status.swap_items()
+						cell_status.swap_items()
 
-			if IOItem.item_drag:
-				if mouse_up(event, 1, IOEqu.equ_rects, multiple_rect=True):
-					if not IOInv.rect.collidepoint(sett.mouse_pos):
-						IOItem.cell_released = check_cell_rect(event, 1, IOEqu.equ_rects, mouse_click_up=True)
-						cell_status = sett.current_game['equipped'][IOItem.cell_released]
-						if cell_status is None:
-							if IOItem.cell_pressed != IOItem.cell_released:
-								if IOGUI.item_on_cursor.itype == IOItem.cell_released:
-									IOGUI.item_on_cursor.equip(frm='cursor')
-						else:
-							if IOGUI.item_on_cursor.itype == IOItem.cell_released:
-								cell_status.swap_items()
+	if IOItem.item_drag:
+		if mouse_up(event, 1, IOEqu.equ_rects, multiple_rect=True):
+			if not IOInv.rect.collidepoint(sett.mouse_pos):
+				IOItem.cell_released = check_cell_rect(event, 1, IOEqu.equ_rects, mouse_click_up=True)
+				cell_status = sett.current_game['equipped'][IOItem.cell_released]
+				if cell_status is None:
+					if IOItem.cell_pressed != IOItem.cell_released:
+						if IOGUI.item_on_cursor.itype == IOItem.cell_released:
+							IOGUI.item_on_cursor.equip(frm='cursor')
+				else:
+					if IOGUI.item_on_cursor.itype == IOItem.cell_released:
+						cell_status.swap_items()
 
 
 def inv_item_mov(event):
 	"""Defines the item movement on the inventory window"""
 
-	if sett.active_screen == 'game':
-		if not IOCombat.combat_active:
-			if IOInv.focused_window:
-				if mouse_down(event, 1, IOInv.inv_rects, multiple_rect=True):
-					IOItem.cell_pressed = check_cell_rect(event, 1, IOInv.inv_rects)
-					cell_status = sett.current_game['inv_items'][IOItem.cell_pressed]
-					if IOGUI.item_on_cursor is None:
-						if cell_status is not None and cell_status != 'locked':
-							if not cell_status.item_locked:
-								IOItem.item_drag = True
-								IOGUI.item_on_cursor = cell_status
-								sett.current_game['inv_items'][IOItem.cell_pressed] = None
-					else:
-						if cell_status is None:
-							sett.current_game['inv_items'][IOItem.cell_pressed] = IOGUI.item_on_cursor
-							IOGUI.item_on_cursor = None
-						elif cell_status is not None and cell_status != 'locked':
-							if not cell_status.item_locked:
-								cell_status.swap_items()
+	if IOInv.focused_window:
+		if mouse_down(event, 1, IOInv.inv_rects, multiple_rect=True):
+			IOItem.cell_pressed = check_cell_rect(event, 1, IOInv.inv_rects)
+			cell_status = sett.current_game['inv_items'][IOItem.cell_pressed]
+			if IOGUI.item_on_cursor is None:
+				if cell_status is not None and cell_status != 'locked':
+					if not cell_status.item_locked:
+						IOItem.item_drag = True
+						IOGUI.item_on_cursor = cell_status
+						sett.current_game['inv_items'][IOItem.cell_pressed] = None
+			else:
+				if cell_status is None:
+					sett.current_game['inv_items'][IOItem.cell_pressed] = IOGUI.item_on_cursor
+					IOGUI.item_on_cursor = None
+				elif cell_status is not None and cell_status != 'locked':
+					if not cell_status.item_locked:
+						cell_status.swap_items()
 
-			if IOItem.item_drag:
-				if mouse_up(event, 1, IOInv.inv_rects, multiple_rect=True):
-					if not IOEqu.rect.collidepoint(sett.mouse_pos):
-						IOItem.cell_released = check_cell_rect(event, 1, IOInv.inv_rects, mouse_click_up=True)
-						cell_status = sett.current_game['inv_items'][IOItem.cell_released]
-						if cell_status is None:
-							if IOItem.cell_pressed != IOItem.cell_released:
-								sett.current_game['inv_items'][IOItem.cell_released] = IOGUI.item_on_cursor
-								IOGUI.item_on_cursor = None
-						elif cell_status is not None and cell_status != 'locked':
-							if not cell_status.item_locked:
-								cell_status.swap_items()
+	if IOItem.item_drag:
+		if mouse_up(event, 1, IOInv.inv_rects, multiple_rect=True):
+			if not IOEqu.rect.collidepoint(sett.mouse_pos):
+				IOItem.cell_released = check_cell_rect(event, 1, IOInv.inv_rects, mouse_click_up=True)
+				cell_status = sett.current_game['inv_items'][IOItem.cell_released]
+				if cell_status is None:
+					if IOItem.cell_pressed != IOItem.cell_released:
+						sett.current_game['inv_items'][IOItem.cell_released] = IOGUI.item_on_cursor
+						IOGUI.item_on_cursor = None
+				elif cell_status is not None and cell_status != 'locked':
+					if not cell_status.item_locked:
+						cell_status.swap_items()
 
 
 def quick_equ(event):
 	"""Enables the quick equip/unequip/swap item control (right click on item) """
 
-	if sett.active_screen == 'game':
-		# Quick unequip (click on equipment) #
-		if IOEqu.focused_window:
-			if mouse_down(event, 3, IOEqu.equ_rects, multiple_rect=True):
-				IOItem.cell_pressed = check_cell_rect(event, 3, IOEqu.equ_rects)
-				if sett.current_game['equipped'][IOItem.cell_pressed] is not None:
-					if not IOInv.full_inv:
-						sett.current_game['equipped'][IOItem.cell_pressed].unequip('inv')
-					else:
-						IOGUI.message('The inventory is full!')
+	# Quick unequip (click on equipment) #
+	if IOEqu.focused_window:
+		if mouse_down(event, 3, IOEqu.equ_rects, multiple_rect=True):
+			IOItem.cell_pressed = check_cell_rect(event, 3, IOEqu.equ_rects)
+			if sett.current_game['equipped'][IOItem.cell_pressed] is not None:
+				if not IOInv.full_inv:
+					sett.current_game['equipped'][IOItem.cell_pressed].unequip('inv')
+				else:
+					IOGUI.message('The inventory is full!')
 
-		# Quick equip (click on inventory) #
-		if IOInv.focused_window:
-			if mouse_down(event, 3, IOInv.inv_rects, multiple_rect=True):
-				IOItem.cell_pressed = check_cell_rect(event, 3, IOInv.inv_rects)
-				cell_status = sett.current_game['inv_items'][IOItem.cell_pressed]
-				if cell_status is not None and cell_status != 'locked':
-					if not cell_status.item_locked:
-						# Quick equip item #
-						if sett.current_game['equipped'][cell_status.itype] is None:
-							cell_status.equip('inv')
-						# Quick swap item #
-						else:
-							cell_status.swap_items(type='quick_eq')
+	# Quick equip (click on inventory) #
+	if IOInv.focused_window:
+		if mouse_down(event, 3, IOInv.inv_rects, multiple_rect=True):
+			IOItem.cell_pressed = check_cell_rect(event, 3, IOInv.inv_rects)
+			cell_status = sett.current_game['inv_items'][IOItem.cell_pressed]
+			if cell_status is not None and cell_status != 'locked':
+				if not cell_status.item_locked:
+					# Quick equip item #
+					if sett.current_game['equipped'][cell_status.itype] is None:
+						cell_status.equip('inv')
+					# Quick swap item #
+					else:
+						cell_status.swap_items(type='quick_eq')
 
 
 def loot_item_mov(event):
 	"""Defines the item movement on the loot window"""
 
-	if sett.active_screen == 'game':
-		if IOLootCombat.active_window:
-			if IOLootCombat.focused_window:
-				if mouse_down(event, 1, IOLootCombat.loot_rects, multiple_rect=True):
-					IOItem.cell_pressed = check_cell_rect(event, 1, IOLootCombat.loot_rects)
-					cell_status = IOLootCombat.loot_buffer[IOItem.cell_pressed]
-					if cell_status is not None:
-						if not IOInv.full_inv:
-							cell_status.pick_item()
-							IOLootCombat.loot_buffer[IOItem.cell_pressed] = None
-							IOLootCombat.check_loot()
+	if IOLootCombat.active_window:
+		if IOLootCombat.focused_window:
+			if mouse_down(event, 1, IOLootCombat.loot_rects, multiple_rect=True):
+				IOItem.cell_pressed = check_cell_rect(event, 1, IOLootCombat.loot_rects)
+				cell_status = IOLootCombat.loot_buffer[IOItem.cell_pressed]
+				if cell_status is not None:
+					if not IOInv.full_inv:
+						cell_status.pick_item()
+						IOLootCombat.loot_buffer[IOItem.cell_pressed] = None
+						IOLootCombat.check_loot()
 
-						else:
-							IOGUI.message('The inventory is full!')
+					else:
+						IOGUI.message('The inventory is full!')
 
-		if IOLootContainer.active_window:
-			if IOLootContainer.focused_window:
-				if mouse_down(event, 1, IOLootContainer.loot_rects, multiple_rect=True):
-					IOItem.cell_pressed = check_cell_rect(event, 1, IOLootContainer.loot_rects)
-					cell_status = sett.current_game['current_container'].loot_items[IOItem.cell_pressed]
-					if cell_status is not None:
-						if not IOInv.full_inv:
-							cell_status.pick_item()
-							sett.current_game['current_container'].loot_items[IOItem.cell_pressed] = None
-							IOLootContainer.check_loot()
+	if IOLootContainer.active_window:
+		if IOLootContainer.focused_window:
+			if mouse_down(event, 1, IOLootContainer.loot_rects, multiple_rect=True):
+				IOItem.cell_pressed = check_cell_rect(event, 1, IOLootContainer.loot_rects)
+				cell_status = sett.current_game['current_container'].loot_items[IOItem.cell_pressed]
+				if cell_status is not None:
+					if not IOInv.full_inv:
+						cell_status.pick_item()
+						sett.current_game['current_container'].loot_items[IOItem.cell_pressed] = None
+						IOLootContainer.check_loot()
 
-						else:
-							IOGUI.message('The inventory is full!')
+					else:
+						IOGUI.message('The inventory is full!')
 
 
 def controls_items(event):
@@ -531,7 +646,7 @@ def controls_items(event):
 
 # Combat controls #
 def controls_combat(event):
-	"""Defines the interaction with the items"""
+	"""Defines the interaction in combat"""
 
 	if sett.active_screen == 'game':
 		if IOCombat.combat_active:
@@ -641,10 +756,19 @@ def controls_main(event):
 		pg.quit()
 		quit()
 
-	controls_char(event)
-	controls_map_interaction(event)
-	controls_gui(event)
-	controls_menu(event)
-	controls_meditation(event)
-	controls_items(event)
-	controls_combat(event)
+	if IOConfirmWindow.active_win:
+		controls_confirm_win(event)
+
+	else:
+		controls_main_menu(event)
+		controls_gui(event)             # Special conditions (e.g. ingame menu button)
+		controls_ingame_menu(event)     # if ingame menu
+
+		if not IOGUI.menu_active:
+			controls_combat(event)      # if combat_active
+
+			if not IOCombat.combat_active:
+				controls_char(event)
+				controls_map_interaction(event)
+				controls_meditation(event)
+				controls_items(event)

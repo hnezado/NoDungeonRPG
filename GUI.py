@@ -12,7 +12,7 @@ class GraphicalUserInterface:
 		self.img_save_game = Sheet('data/images/gui/save_game.png', (5, 1))
 		self.img_delete_game = Sheet('data/images/gui/delete_game.png', (3, 1))
 		self.img_gui_bg1 = pg.image.load('data/images/gui/guis/gui_bg1.png').convert_alpha()
-		self.img_but_main_menu = Sheet('data/images/gui/but_main_menu.png', dimensions=(2, 1))
+		self.img_but_icon_ingame_menu = Sheet('data/images/gui/but_icon_ingame_menu.png', dimensions=(1, 1))
 		self.img_but_bg50 = Sheet('data/images/gui/but_bg50.png', dimensions=(1, 3))
 		self.img_but_bg50_sh = Sheet('data/images/gui/but_bg50_sh.png', dimensions=(1, 3))
 		self.img_but_bg100 = Sheet('data/images/gui/but_bg100.png', dimensions=(2, 1))
@@ -30,16 +30,17 @@ class GraphicalUserInterface:
 		self.img_info_bg = pg.image.load('data/images/info_bg.png').convert()
 
 		# Menu #
+		self.ingame_menu_button = Button(screen, bg=self.img_but_bg150_sh, icon=self.img_but_icon_ingame_menu,
+		                                 sheet_index=0, pos=(850, 694))
 		self.menu_active = False
 		self.menu_layer = 'main'
-		self.sound_active = True
 		self.menu_rect = self.img_menu_bg.get_rect()
 		self.menu_pos = (disp_w*0.5-self.img_menu_bg.get_width()*.5, disp_h*0.5-self.img_menu_bg.get_height()*0.5)
 		self.menu_but_imgs = {'resume': text('Resume', font_style=info_font, font_size=30, color=col_black)[0],
 		                      'save': text('Save', font_style=info_font, font_size=30, color=col_black)[0],
 		                      'load': text('Load', font_style=info_font, font_size=30, color=col_black)[0],
 		                      'settings': text('Settings', font_style=info_font, font_size=30, color=col_black)[0],
-		                      'quit': text('Quit', font_style=info_font, font_size=30, color=col_black)[0],
+		                      'main_menu': text('Main menu', font_style=info_font, font_size=30, color=col_black)[0],
 		                      'load_game': text('Load game', font_style=info_font, font_size=30, color=col_black)[0],
 		                      'sound_on': text('Sound on', font_style=info_font, font_size=30, color=col_green)[0],
 		                      'sound_off': text('Sound off', font_style=info_font, font_size=30, color=col_red)[0],
@@ -70,12 +71,12 @@ class GraphicalUserInterface:
 						hover_on=True, img=self.menu_but_imgs['settings'],
 						img_hover=text('Settings', font_style=info_font, font_size=30, color=col_white)[0],
 						img_pressed=text('Settings', font_style=info_font, font_size=30, color=col_grey)[0]),
-				'quit': Button(
-						screen, pos=self.menu_but_imgs['quit'].get_rect(
+				'main_menu': Button(
+						screen, pos=self.menu_but_imgs['main_menu'].get_rect(
 								center=(self.menu_pos[0]+self.menu_rect.w*0.5, self.menu_pos[1]+self.menu_rect.h*0.9)),
-						hover_on=True, img=self.menu_but_imgs['quit'],
-						img_hover=text('Quit', font_style=info_font, font_size=30, color=col_white)[0],
-						img_pressed=text('Quit', font_style=info_font, font_size=30, color=col_grey)[0]),
+						hover_on=True, img=self.menu_but_imgs['main_menu'],
+						img_hover=text('Main menu', font_style=info_font, font_size=30, color=col_white)[0],
+						img_pressed=text('Main menu', font_style=info_font, font_size=30, color=col_grey)[0]),
 				'save_game_buttons': {
 						'save_game1': Button(
 								screen, pos=(self.menu_pos[0]+self.menu_rect.w*0.5-self.img_save_game.crop_w*0.5,
@@ -241,24 +242,29 @@ class GraphicalUserInterface:
 				if sett.current_game['previous_container'] is not None:
 					sett.current_game['previous_container'].opened = False
 
-	def draw_ingame_menu(self):
-		"""Displays the ingame menu if opened"""
+	def draw_menu(self, main_menu=False):
+		"""Displays the menu if opened"""
 
-		if self.menu_active:
-			sett.current_game['current_char'].stop_movement()
-			IOAtlas.fade_bg('in')
-			IOAtlas.fading['menu'] = 'in'
-			if IOAtlas.opacity_counter >= 200:
-				IOAtlas.fading['menu'] = 'out'
-			IOIngameMenuButton.draw_button()
-			screen.blit(self.img_menu_bg, self.menu_pos)
-			self.draw_menu_buttons()
+		if main_menu:
+			if self.menu_active:
+				screen.blit(self.img_menu_bg, self.menu_pos)
+				self.draw_menu_buttons()
 		else:
-			if IOAtlas.fading['menu'] == 'out':
-				IOAtlas.fade_bg('out')
-				if IOAtlas.opacity_counter <= 0:
-					IOAtlas.fading['menu'] = 'off'
-			IOIngameMenuButton.draw_button()
+			if self.menu_active:
+				sett.current_game['current_char'].stop_movement()
+				IOAtlas.fade_bg('in')
+				IOAtlas.fading['menu'] = 'in'
+				if IOAtlas.opacity_counter >= 200:
+					IOAtlas.fading['menu'] = 'out'
+				screen.blit(self.img_menu_bg, self.menu_pos)
+				self.draw_menu_buttons()
+			else:
+				if IOAtlas.fading['menu'] == 'out':
+					IOAtlas.fade_bg('out')
+					if IOAtlas.opacity_counter <= 0:
+						IOAtlas.fading['menu'] = 'off'
+
+			IOGUI.ingame_menu_button.draw_button()
 
 	def draw_menu_buttons(self):
 		"""Displays the menu buttons"""
@@ -268,7 +274,7 @@ class GraphicalUserInterface:
 			self.menu_but['save'].draw_button()
 			self.menu_but['load'].draw_button()
 			self.menu_but['settings'].draw_button()
-			self.menu_but['quit'].draw_button()
+			self.menu_but['main_menu'].draw_button()
 
 		elif self.menu_layer == 'save':
 			self.check_saved_games()
@@ -329,15 +335,13 @@ class GraphicalUserInterface:
 		"""Receives different menu actions"""
 
 		if action == 'open':
-			sett.active_screen = 'menu'
 			self.menu_active = True
 		elif action == 'close':
 			self.menu_layer = 'main'
 			sett.active_screen = 'game'
 			self.menu_active = False
-		elif action == 'quit':
-			pg.quit()
-			quit()
+		elif action == 'main_menu':
+			sett.active_screen = 'main_menu'
 		elif action == 'save_game':
 			self.save_game(socket)
 			self.message('Game saved')
@@ -849,8 +853,6 @@ class GraphicalUserInterface:
 
 
 IOGUI = GraphicalUserInterface()
-IOIngameMenuButton = Button(screen, icon=IOGUI.img_but_main_menu, pos=(850, 694),
-                          displace_pressed=(0, 0), icon_pressed_custom=True)
 
 
 class GUIWindow:

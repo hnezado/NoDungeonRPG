@@ -1,5 +1,4 @@
-from settings import *
-import settings as sett
+from confirm_win import *
 
 generic_floors = []
 generic_walls = []

@@ -29,7 +29,6 @@
 # The Cruxer can be upgraded somehow to divide or combine more complex crux.
 
 from controls import *
-from main_menu import *
 
 # gen_item(iclass='ragged_bandana', iqual='unique').pick_item()
 # gen_item(iclass='fist_knife', iqual='rare').equip()
@@ -53,12 +52,12 @@ def refresh_controls():
 		IOLootCombat.move_win_pressed = False
 		IOLootContainer.close_pressed = False
 		IOLootContainer.move_win_pressed = False
-		IOIngameMenuButton.pressed = False
+		IOGUI.ingame_menu_button.pressed = False
 		IOGUI.menu_but['resume'].pressed = False
 		IOGUI.menu_but['save'].pressed = False
 		IOGUI.menu_but['load'].pressed = False
 		IOGUI.menu_but['settings'].pressed = False
-		IOGUI.menu_but['quit'].pressed = False
+		IOGUI.menu_but['main_menu'].pressed = False
 		if IOGUI.menu_active:
 			for socket in IOGUI.menu_but['save_game_buttons'].keys():
 				IOGUI.menu_but['save_game_buttons'][socket].pressed = False
@@ -79,17 +78,18 @@ def refresh_controls():
 def main_menu():
 	"""Displays the main menu"""
 
-	IOMainMenu.draw_main_menu()
+	if sett.active_screen == 'main_menu':
+		IOMainMenu.draw_main_menu()
 
 
 def game():
 	"""Displays every ingame element on the screen"""
 
-	if sett.game_on:
+	if sett.active_screen == 'game':
 		sett.current_game['current_map'].draw_map()
 		IOGUI.draw_gui()
 		# IOCombat.draw_combat()
-		IOGUI.draw_ingame_menu()
+		IOGUI.draw_menu()
 		IOAtlas.check_transition()
 
 
@@ -104,6 +104,7 @@ def main():
 
 		main_menu()
 		game()
+		IOConfirmWindow.draw_win()
 
 		IOGUI.draw_cursor()
 
