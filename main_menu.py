@@ -179,8 +179,6 @@ class MainMenu:
 	def new_game():
 		"""Creates a new game instance"""
 
-		pass
-
 		# sett.current_game['date_time'] = None
 		# sett.current_game['current_char'] = None
 		# sett.current_game['current_map'] = None
