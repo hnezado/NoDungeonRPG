@@ -368,8 +368,11 @@ class GraphicalUserInterface:
 	def load_game(socket):
 		"""Checks if any saved game to load it"""
 
-		sett.save_sockets[socket] = loadgame(socket)
+		# sett.save_sockets[socket] = loadgame(socket)
 		sett.current_game = sett.save_sockets[socket]
+		IOAtlas.explore_area()
+		print('map', sett.current_game['current_map'])
+		print('exploring: ', IOAtlas.surrounding_coords)
 
 	def msg_box(self):
 		"""Displays every messages list element as a line into the message box"""

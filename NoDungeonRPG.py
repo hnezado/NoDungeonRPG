@@ -82,21 +82,30 @@ def main_menu():
 		IOMainMenu.draw_main_menu()
 
 
-def game():
+def game(first_load=False):
 	"""Displays every ingame element on the screen"""
 
-	if sett.active_screen == 'game':
+	if first_load:
 		sett.current_game['current_map'].draw_map()
 		IOGUI.draw_gui()
-		# IOCombat.draw_combat()
+		IOCombat.draw_combat()
 		IOGUI.draw_menu()
 		IOAtlas.check_transition()
+
+	else:
+		if sett.active_screen == 'game':
+			sett.current_game['current_map'].draw_map()
+			IOGUI.draw_gui()
+			# IOCombat.draw_combat()
+			IOGUI.draw_menu()
+			IOAtlas.check_transition()
 
 
 def main():
 	"""Runs the main script loop"""
 
 	IOGUI.check_saved_games()
+	game(first_load=True)
 	while True:
 
 		for event in pg.event.get():
