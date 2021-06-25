@@ -49,6 +49,7 @@ class Map:
 		self.buffer_spawn = []
 		self.respawn_time = 5000
 		self.paths_opened = {'north': None, 'south': None, 'west': None, 'east': None}
+		self.coordinates = ()
 
 	def suitable_mobj(self):
 		"""Selects every suitable map object"""
@@ -789,4 +790,4 @@ HeTN, HeTS, HeTW, HeTE, HTNW, HTNE, HTSW, HTSE = \
 	HerdionTownNorth(), HerdionTownSouth(), HerdionTownWest(), HerdionTownEast(), \
 	HerdionTownNorthwest(), HerdionTownNortheast(), HerdionTownSouthwest(), HerdionTownSoutheast()
 
-sett.current_game['current_map'] = FrLa
+sett.current_game['current_map'] = HeTE

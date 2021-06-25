@@ -13,6 +13,7 @@ class Char:
 
 		self.pos = [0, 0]
 		self.visual_rect = None             # (30 x 52)
+		# Blocking rect: (24, 21)
 
 		self.facing = 'down'
 		self.frame_up_start, self.frame_down_start, self.frame_left_start, self.frame_right_start = 1, 10, 19, 28

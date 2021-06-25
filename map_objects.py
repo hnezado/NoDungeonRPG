@@ -534,9 +534,9 @@ class GrassyRock2(MapObject):
 		self.name = 'grassy_rock2'
 		self.type = 'deco'
 		self.map_elements = {'terrain': ['dirt', 'rock'], 'climate': ['template', 'tropical', 'tundra']}
-		self.depth = 30
+		self.depth = 40
 
-		self.given_block_rect = pg.Rect(35, 25, 60, 70)
+		self.given_block_rect = pg.Rect(26, 21, 64, 52)
 
 		self.update_mobj('map_elements', 'lists', 'v_rect')
 

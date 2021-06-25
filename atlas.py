@@ -33,6 +33,7 @@ class Atlas:
 	def explore_area(self):
 		"""Explores the current area and its surroundings in the atlas layout (North, South, West, East)"""
 
+		self.set_maps_coords()
 		self.current_coords = self.get_current_area_coords()
 		print(self.current_coords)
 		self.surrounding_coords = self.get_surrounding_areas_coords()
@@ -40,19 +41,28 @@ class Atlas:
 		self.match_paths()
 		self.open_paths()
 
+	def set_maps_coords(self):
+		"""Reads and sets the atlas coordinates of every map"""
+
+		for row_index, row in enumerate(self.layout):
+			for col_index, map in enumerate(row):
+				if type(map) != int:
+					map.coordinates = (row_index, col_index)
+
 	def get_current_area_coords(self):
 		"""Returns the current area coordinates"""
 
 		for row_index, row in enumerate(self.layout):
-			for col_index, area in enumerate(row):
-				print(area, sett.current_game['current_map'])
+			for col_index, map in enumerate(row):
+				print(map, sett.current_game['current_map'])
 				# Esta forma no va a funcionar ya que son dos instancias diferentes en el momento que carges un juego guardado
 				# Está comparando las intancias
 				# Tal vez si guardo las coordenadas correspondientes a cada instancia de mapa en el mismo mapa
-				if area == sett.current_game['current_map']:
-					print('bingo')
-					coordinates = (row_index, col_index)
-					return coordinates
+				if type(map) != int:
+					if map.coordinates == sett.current_game['current_map'].coordinates:
+						print('bingo')
+						coordinates = (row_index, col_index)
+						return coordinates
 
 	def get_surrounding_areas_coords(self):
 		"""Returns the surrounding area coordinates"""
