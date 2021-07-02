@@ -2,7 +2,6 @@
 
 # Fix loot generation based on creature or container modifiers
 # Add friendly attitude
-# Add more map and create transaction between them
 
 ### IDEAS ###
 
