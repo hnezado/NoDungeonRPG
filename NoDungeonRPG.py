@@ -95,7 +95,7 @@ def game(first_load=False):
 		if sett.active_screen == 'game':
 			sett.current_game['current_map'].draw_map()
 			IOGUI.draw_gui()
-			# IOCombat.draw_combat()
+			IOCombat.draw_combat()
 			IOGUI.draw_menu()
 			IOAtlas.check_transition()
 

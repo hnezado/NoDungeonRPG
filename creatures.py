@@ -192,8 +192,10 @@ class Yeti(Creature):
 		self.affinities = {'terrain': ['snow'], 'climate': ['tundra']}
 
 		self.base_stats['max_hp'] = r.randint(20, 50)
-		self.base_stats['min_att'] = 12
-		self.base_stats['max_att'] = 22
+		# self.base_stats['min_att'] = 12
+		# self.base_stats['max_att'] = 22
+		self.base_stats['min_att'] = 100
+		self.base_stats['max_att'] = 100
 		self.base_stats['initiative'] = 3
 
 		self.update_cr('lists', 'v_rect')

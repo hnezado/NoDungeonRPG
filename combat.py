@@ -7,7 +7,7 @@ combat_img = {
 		'combat_bg': None,
 		'combat_bg_sand': pg.image.load('data/images/combat/combat_bg_sand.png').convert_alpha(),
 		'combat_bg_dirt': pg.image.load('data/images/combat/combat_bg_dirt.png').convert_alpha(),
-		# 'combat_bg_rock': pg.image.load('data/images/combat/combat_bg_rock.png').convert_alpha(),
+		'combat_bg_rock': pg.image.load('data/images/combat/combat_bg_rock.png').convert_alpha(),
 		'combat_but_bg': pg.image.load('data/images/combat/combat_but_bg.png').convert_alpha(),
 		'action_icons': Sheet('data/images/combat/combat_action_icons.png', dimensions=(1, 4)),
 		'combat_cr_bar_glass': pg.image.load('data/images/combat/combat_cr_glass_bar.png').convert_alpha(),
@@ -267,6 +267,7 @@ class Combat:
 			loot(stats=True)
 		elif reason == 'lose':
 			IOGUI.message(f'{sett.current_game["current_char"].char_name} has been defeated', 'combat')
+
 		elif reason == 'retreat':
 			IOGUI.message(f'{sett.current_game["current_char"].char_name} has retreated successfully', 'combat')
 		elif reason == 'flee':
