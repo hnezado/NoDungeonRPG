@@ -10,7 +10,14 @@ title = text(txt='No Dungeon RPG', font_style=info_font, font_size=60, color=col
 class MainMenu:
 	def __init__(self):
 		self.main_menu_bg = pg.image.load('data/images/main_menu/main_menu_bg.png')
+		self.main_menu_lightnings = Sheet('data/images/main_menu/lightnings.png', (4, 1))
+		self.lightnings = {1: pg.image.load('data/images/main_menu/lightning1.png'),
+						   2: pg.image.load('data/images/main_menu/lightning2.png'),
+						   3: pg.image.load('data/images/main_menu/lightning3.png'),
+						   4: pg.image.load('data/images/main_menu/lightning4.png')}
 		self.main_menu_buttons_panel = pg.image.load('data/images/main_menu/main_menu_buttons_bg.png')
+		self.selected_lightning = 0
+		self.ltng = {'sel': 0, 'anim': '', 'opacity': 255, 'still_timer': 0.0, 'still_time': 200, 'intv_timer': time.time()*1000, 'intv_time': 1000}
 		self.panel_pos = (0, self.main_menu_bg.get_height())
 		self.panel_rect = pg.Rect(self.main_menu_buttons_panel.get_rect())
 		self.but_rect = pg.Rect(0, 0, 158, 58)
@@ -164,9 +171,41 @@ class MainMenu:
 		"""Display the main menu"""
 
 		screen.blit(self.main_menu_bg, (0, 0))
+		self.draw_lightnings()
 		screen.blit(title, (disp_w*0.5-title.get_width()*0.5, disp_h*0.125))
 		self.draw_buttons()
 		IOGUI.draw_menu(main_menu=True)
+
+	def draw_lightnings(self):
+		"""Displays the lightnings effect on the main menu background"""
+
+		l_img = self.lightnings
+		l_speed_in = 150
+		l_speed_out = 25
+		now = time.time()*1000
+
+		if now > self.ltng['intv_timer'] + self.ltng['intv_time']:
+			if not self.ltng['sel']:
+				if r.randint(1, 100) <= 1:
+					self.ltng['sel'] = r.randint(1, 4)
+					self.ltng['anim'] = 'in'
+			if self.ltng['sel']:
+				blit_alpha(screen, l_img[self.ltng['sel']], (0, 0), self.ltng['opacity'])
+			if self.ltng['anim'] == 'in':
+				self.ltng['opacity'] += l_speed_in
+				if self.ltng['opacity'] >= 255:
+					self.ltng['opacity'] = 255
+					self.ltng['anim'] = 'still'
+					self.ltng['still_timer'] = now
+			elif self.ltng['anim'] == 'still':
+				if now > self.ltng['still_timer'] + self.ltng['still_time']:
+					self.ltng['anim'] = 'out'
+			elif self.ltng['anim'] == 'out':
+				self.ltng['opacity'] -= l_speed_out
+				if self.ltng['opacity'] <= 0:
+					self.ltng['opacity'] = 0
+					self.ltng['sel'] = 0
+					self.ltng['timer'] = now
 
 	def draw_buttons(self):
 		"""Displays the main menu buttons"""
