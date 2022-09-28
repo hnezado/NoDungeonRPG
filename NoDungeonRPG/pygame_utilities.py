@@ -1,6 +1,25 @@
 import pygame as pg
 import pickle as pkl
 
+font = {
+    "info": "data/fonts/germania.ttf"
+        }
+
+color = {
+    "black": (0, 0, 0),
+    "white": (255, 255, 255),
+    "red": (255, 0, 0),
+    "green_lime": (0, 255, 0),
+    "blue": (0, 0, 255),
+    "purple": (128, 0, 128),
+    "gold": (218, 165, 32),
+    "green": (0, 128, 0),
+    "yellow": (255, 255, 0),
+    "blue_navy": (0, 0, 128),
+    "grey": (128, 128, 128),
+    "dark_red": (128, 0, 0),
+}
+
 
 def savegame(data, filename):
     """Saves the game status"""

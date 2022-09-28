@@ -93,8 +93,9 @@
 #             IOGUI.draw_menu()
 #             IOAtlas.check_transition()
 
+from controls import Controls
 from menu import *
-from main_menu import *
+from main_menu import MainMenu
 import os
 
 
@@ -104,8 +105,8 @@ if __name__ == "__main__":
 
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pg.display.set_caption('NoDungeonRPG')
-    disp_w, disp_h = 1024, 768
-    screen = pg.display.set_mode([disp_w, disp_h])
+    scr_dim = [1024, 768]
+    scr = pg.display.set_mode(scr_dim)
     default_clock = 60
     timer = 0
     cursor = 'data/images/gui/cursor24.png'
@@ -113,17 +114,18 @@ if __name__ == "__main__":
     tile_w, tile_h = 64, 64
     info_font = 'data/fonts/germania.ttf'
 
-    menu = Menu()
-    main_menu = MainMenu(screen, menu)
+    menu = Menu(scr, scr_dim)
+    main_menu = MainMenu(scr, menu)
+    controls = Controls(menu, main_menu)
     # IOGUI.check_saved_games()
     # game(first_load=True)
     while True:
 
-        # for event in pg.event.get():
-        #     controls_main(event, main_menu)
+        for event in pg.event.get():
+            controls.main(event)
 
-        if main_menu.active:
-            main_menu.display()
+        menu.display()
+        main_menu.display()
         # game()
         # IOConfirmWindow.draw_win()
 
