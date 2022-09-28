@@ -189,6 +189,10 @@ class Menu:
                 for socket, btn_bg in self.sockets_load["bg"].items():
                     btn_bg.draw_button()
                 self.btn_back.draw_button()
+            elif self.layer == 'new_game':
+                self.btn_back.draw_button()
+            elif self.layer == 'settings':
+                self.btn_back.draw_button()
 
     def load(self):
         pass

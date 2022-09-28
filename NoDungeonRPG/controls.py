@@ -1,5 +1,5 @@
 import pygame as pg
-from pygame_utilities import mouse_down, mouse_up
+from pygame_utilities import mouse_down, mouse_up, key_down, key_up
 
 
 class Controls:
@@ -13,38 +13,40 @@ class Controls:
             pg.quit()
             quit()
 
-        self.c_menu(event)
-        self.c_main_menu(event)
+        self.ctrl_menu(event)
+        self.ctrl_main_menu(event)
 
         self.reset_btns(event)
 
-    def activate(self, win=None):
-        self.menu.active = False
+    def set_active(self, win=None):
         self.main_menu.active = False
 
-        if win == 'menu':
-            self.menu.active = True
-        elif win == 'main_menu':
+        if win == 'main_menu':
             self.main_menu.active = True
 
     def reset_btns(self, event):
         if mouse_up(event, 1):
             self.menu.btn_back.pressed = False
 
-    def c_menu(self, event):
+    def ctrl_menu(self, event):
         if self.menu.active:
             # if IOMouseHover.mouse_hover(sett.mouse_pos, self.menu.btn_back.rect):
             #     self.menu.btn_back.hovering = True
             # else:
             #     self.menu.btn_back.hovering = False
-            if mouse_down(event, 1, self.menu.btn_back):
-                self.menu.btn_back.pressed = True
-            if self.menu.btn_back.pressed:
-                if mouse_up(event, 1, self.menu.btn_back):
-                    self.menu.layer = ''
-                    self.activate('main_menu')
+            if self.menu.layer in ["load", "new_game", "settings"]:
+                if mouse_down(event, 1, self.menu.btn_back):
+                    self.menu.btn_back.pressed = True
+                if self.menu.btn_back.pressed:
+                    if mouse_up(event, 1, self.menu.btn_back):
+                        self.menu.layer = ""
+                        self.set_active("main_menu")
 
-    def c_main_menu(self, event):
+                if key_down(event, pg.K_ESCAPE):
+                    self.menu.layer = ""
+                    self.set_active("main_menu")
+
+    def ctrl_main_menu(self, event):
         if self.main_menu.active:
             if mouse_down(event, 1, self.main_menu.btns["continue"].rect):
                 self.main_menu.btns["continue"].pressed = True
@@ -52,7 +54,7 @@ class Controls:
                 if mouse_up(event, 1, self.main_menu.btns["continue"].rect):
                     self.main_menu.btns["continue"].pressed = False
                     self.main_menu.draw_buttons()
-                    self.activate("menu")
+                    self.set_active("menu")
                     self.menu.layer = "load"
 
             if mouse_down(event, 1, self.main_menu.btns["new_game"].rect):
@@ -61,7 +63,8 @@ class Controls:
                 if mouse_up(event, 1, self.main_menu.btns["new_game"].rect):
                     self.main_menu.btns["new_game"].pressed = False
                     self.main_menu.draw_buttons()
-                    self.activate("menu")
+                    self.set_active("menu")
+                    self.menu.layer = "new_game"
 
             if mouse_down(event, 1, self.main_menu.btns["settings"].rect):
                 self.main_menu.btns["settings"].pressed = True
@@ -69,7 +72,8 @@ class Controls:
                 if mouse_up(event, 1, self.main_menu.btns["settings"].rect):
                     self.main_menu.btns["settings"].pressed = False
                     self.main_menu.draw_buttons()
-                    self.activate("menu")
+                    self.set_active("menu")
+                    self.menu.layer = "settings"
 
             if mouse_down(event, 1, self.main_menu.btns["quit"].rect):
                 self.main_menu.btns["quit"].pressed = True
