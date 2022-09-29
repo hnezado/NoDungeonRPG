@@ -1,65 +1,96 @@
-from settings import *
-import settings as sett
+from pygame_utilities import *
 
 
 class ConfirmWindow:
-	def __init__(self):
-		self.img_but_bg100 = Sheet('data/images/gui/but_bg100.png', dimensions=(2, 1))
-		self.images = {
-				'bg': pg.image.load('data/images/confirm_window/confirm_win_bg.png').convert_alpha(),
-				'button_icons': Sheet('data/images/confirm_window/confirm_win_button_icons.png', (1, 2))
+	def __init__(self, scr, scr_dim):
+		self.scr = scr
+		self.scr_w, self.scr_h = scr_dim
+		self.img_btn_bg100 = Sheet("data/images/gui/but_bg100.png", dimensions=(2, 1))
+		self.imgs = {
+			"bg": pg.image.load("data/images/confirm_window/confirm_win_bg.png").convert_alpha(),
+			"btn_bg100": Sheet("data/images/gui/but_bg100.png", dimensions=(2, 1)),
+			"btn_icons": Sheet("data/images/confirm_window/confirm_win_button_icons.png", (1, 2)),
 		}
 
-		self.win_rect = self.images['bg'].get_rect()
-		self.win_pos = (disp_w*0.5-self.win_rect.w*0.5, disp_h*0.5-self.win_rect.h*0.5)
+		self.rect = self.imgs["bg"].get_rect()
+		self.pos = (self.scr_w * 0.5 - self.rect.w * 0.5, self.scr_h * 0.5 - self.rect.h * 0.5,)
 
-		self.button_pos = {
-				'accept': (self.win_pos[0]+self.win_rect.w*0.25-self.img_but_bg100.rect.w*0.5,
-				           self.win_pos[1]+self.win_rect.h*0.65),
-				'cancel': (self.win_pos[0]+self.win_rect.w*0.75-self.img_but_bg100.rect.w*0.5,
-				           self.win_pos[1]+self.win_rect.h*0.65),
+		self.btn_pos = {
+			"accept": (self.pos[0] + self.rect.w * 0.25 - self.imgs["btn_bg100"].rect.w * 0.5,
+					   self.pos[1] + self.rect.h * 0.65),
+			"cancel": (self.pos[0] + self.rect.w * 0.75 - self.imgs["btn_bg100"].rect.w * 0.5,
+					   self.pos[1] + self.rect.h * 0.65,),
 		}
-		self.buttons = {
-				'accept': Button(screen, bg=self.img_but_bg100, icon=self.images['button_icons'],
-				                   sheet_index=0, pos=self.button_pos['accept']),
-				'cancel': Button(screen, bg=self.img_but_bg100, icon=self.images['button_icons'],
-				                   sheet_index=1, pos=self.button_pos['cancel']),
+		self.btns = {
+			"accept": Button(
+				self.scr,
+				bg=self.imgs["btn_bg100"],
+				icon=self.imgs["btn_icons"],
+				sheet_index=0,
+				pos=self.btn_pos["accept"],
+			),
+			"cancel": Button(
+				self.scr,
+				bg=self.imgs["btn_bg100"],
+				icon=self.imgs["btn_icons"],
+				sheet_index=1,
+				pos=self.btn_pos["cancel"],
+			),
 		}
 
-		self.padding = (20, 20)
+		self.msg_padding = (20, 20)
 
-		self.confirmation_text = ''
+		self.msgs = {
+			"main_menu": "Do you want to go to the main menu?",
+			"quit": "Do you want to quit?"
+		}
+		self._confirmation_text = ''
 
 		self.msg = None
 		self.msg_pos = []
 
-		self.active_win = False
-		self.type = ''
+		self._mode = None
+		self._active = False
 
-	def draw_win(self):
-		"""Displays the confirm window if active"""
+	@property
+	def active(self):
+		return self._active
 
-		if self.active_win:
-			screen.blit(self.images['bg'], self.win_pos)
-			for index, line in enumerate(self.msg):
-				screen.blit(self.msg[index], self.msg_pos[index])
-			for but in self.buttons.keys():
-				self.buttons[but].draw_button()
+	@active.setter
+	def active(self, value):
+		if type(value) == bool:
+			self._active = value
+		else:
+			raise ValueError('Value must be a boolean')
 
-	def set_msg(self, msg):
-		"""Sets the message to display on the confirmation window"""
+	@property
+	def mode(self):
+		return self._mode
 
-		if msg == 'main_menu':
-			self.confirmation_text = 'Do you want to go to the main menu?'
-			self.type = 'main_menu'
-		elif msg == 'quit':
-			self.confirmation_text = 'Do you want to quit?'
-			self.type = 'quit'
-		else: raise Exception('The confirmation text is not valid!')
+	@mode.setter
+	def mode(self, value):
+		if value in self.msgs.keys():
+			self._mode = value
+		else:
+			raise ValueError(f'Value must be in {self.msgs.keys()}')
 
-		self.msg = text(self.confirmation_text, info_font, 24, col_black, max_length=24)
-		self.msg_pos = [(self.win_pos[0]+self.win_rect.w*0.5-line.get_width()*0.5,
-		                 self.win_pos[1]+self.padding[1]+index*line.get_height()+2) for index, line in enumerate(self.msg)]
+	def display(self):
+		"""Displays the confirmation window"""
 
+		if self.active:
+			if self.msg:
+				self.scr.blit(self.imgs["bg"], self.pos)
+				for index, line in enumerate(self.msg):
+					self.scr.blit(self.msg[index], self.msg_pos[index])
+				for btn in self.btns.keys():
+					self.btns[btn].draw_button()
 
-IOConfirmWindow = ConfirmWindow()
+	def set_mode(self, mode):
+		"""Sets the confirmation window mode and its message"""
+
+		self.mode = mode
+
+		self.msg = text(self.msgs[self.mode], font["info"], 24, color["black"], max_length=24)
+		self.msg_pos = [(self.pos[0] + self.rect.w * 0.5 - line.get_width() * 0.5,
+						 self.pos[1] + self.msg_padding[1] + index * line.get_height() + 2)
+						for index, line in enumerate(self.msg)]

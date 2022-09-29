@@ -93,9 +93,10 @@
 #             IOGUI.draw_menu()
 #             IOAtlas.check_transition()
 
-from controls import Controls
+from confirm_win import ConfirmWindow
 from menu import *
 from main_menu import MainMenu
+from controls import Controls
 import os
 
 
@@ -114,9 +115,10 @@ if __name__ == "__main__":
     tile_w, tile_h = 64, 64
     info_font = 'data/fonts/germania.ttf'
 
+    confirm_win = ConfirmWindow(scr, scr_dim)
     menu = Menu(scr, scr_dim)
     main_menu = MainMenu(scr, menu)
-    controls = Controls(menu, main_menu)
+    controls = Controls(confirm_win, menu, main_menu)
     # IOGUI.check_saved_games()
     # game(first_load=True)
     while True:
@@ -124,10 +126,10 @@ if __name__ == "__main__":
         for event in pg.event.get():
             controls.main(event)
 
-        menu.display()
         main_menu.display()
         # game()
-        # IOConfirmWindow.draw_win()
+        menu.display()
+        confirm_win.display()
 
         # IOGUI.draw_cursor()
 

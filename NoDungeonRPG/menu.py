@@ -14,8 +14,9 @@ class Menu:
 
         self.txt_btn_back = text('Back', font_style=font["info"], font_size=30, color=color["black"])[0]
 
-        self.active = False
-        self.layer = ''
+        self._active = False
+        self._mode = None
+        self._layer = None
 
         self.btn_back = Button(
             self.scr,
@@ -182,17 +183,56 @@ class Menu:
         #                    img_pressed=text('Back', font_style=info_font, font_size=30, color=col_grey)[0])
         # }
 
+    @property
+    def active(self):
+        return self._active
+
+    @active.setter
+    def active(self, value):
+        if type(value) == bool:
+            self._active = value
+        else:
+            raise ValueError('Value must be a boolean')
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, value):
+        valid_values = ["main_menu", "ingame"]
+        if value in valid_values:
+            self._mode = value
+        else:
+            raise ValueError(f'Value must be in {valid_values}')
+
+    @property
+    def layer(self):
+        return self._layer
+
+    @layer.setter
+    def layer(self, value):
+        valid_values = [None, "load", "new_game", "settings"]
+        if value in valid_values:
+            self._layer = value
+        else:
+            raise ValueError(f'Value must be in {valid_values}')
+
     def display(self):
         if self.active:
-            self.scr.blit(self.img_bg, self.pos)
-            if self.layer == 'load':
-                for socket, btn_bg in self.sockets_load["bg"].items():
-                    btn_bg.draw_button()
-                self.btn_back.draw_button()
-            elif self.layer == 'new_game':
-                self.btn_back.draw_button()
-            elif self.layer == 'settings':
-                self.btn_back.draw_button()
+            if self.mode == 'main_menu':
+                self.scr.blit(self.img_bg, self.pos)
+                if self.layer == 'load':
+                    for socket, btn_bg in self.sockets_load["bg"].items():
+                        btn_bg.draw_button()
+                    self.btn_back.draw_button()
+                elif self.layer == 'new_game':
+                    self.btn_back.draw_button()
+                elif self.layer == 'settings':
+                    self.btn_back.draw_button()
+            elif self.mode == "ingame":
+                self.scr.blit(self.img_bg, self.pos)
+                pass
 
     def load(self):
         pass
