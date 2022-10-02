@@ -259,16 +259,13 @@ def mouse_up(event, button, rect=None, multiple_rect=False):
                 return True
 
 
-def mouse_visible(show=True, surface=None, image=None, mouse_pos=None):
+def mouse_visible(surface, image=None, mouse_pos=None, show=True):
     if image is not None:
         pg.mouse.set_visible(False)
         cursor = pg.image.load(image).convert_alpha()
         surface.blit(cursor, mouse_pos)
     else:
-        if show:
-            pg.mouse.set_visible(True)
-        else:
-            pg.mouse.set_visible(False)
+        pg.mouse.set_visible(show)
 
 
 def clock(ticks):
@@ -357,57 +354,51 @@ class BlinkingText:
 class MouseHover:
     def __init__(self):
         self.time = pg.time.get_ticks()
+        self.hover_start = False
+        self.hover_end = False
 
-    def reset_time(self):
+    def reset(self):
         """Resets the time variable"""
 
         self.time = pg.time.get_ticks()
+        self.hover_start = True
 
-    def mouse_hover(self, mouse_pos, rect, ms=None, return_rect=False):
-        """Detects collision between rect and mouse position. If ms provided, delays the return
-        If dict is provided and return_rect=True, returns the matching key"""
+    def hover(self, mouse_pos, rect, ms=0):
+        """Detects collision between rect and mouse position. If ms provided, delays the rect return
+        If dict is provided returns the matching key"""
 
         if type(rect) == list:
             for rct in rect:
-                if rct.collidepoint(mouse_pos):
-                    if ms is not None:
-                        if pg.time.get_ticks() > self.time:
-                            if return_rect:
-                                return rct
-                            else:
-                                return True
-                    else:
-                        if return_rect:
+                if isinstance(rct, pg.Rect):
+                    if rct.collidepoint(mouse_pos):
+                        if not self.hover_start:
+                            self.reset()
+                        self.hover_end = pg.time.get_ticks() > self.time + ms
+                        if self.hover_start and self.hover_end:
                             return rct
-                        else:
-                            return True
-        elif type(rect) == dict:
-            for key, rct in rect.items():
-                if rct.collidepoint(mouse_pos):
-                    if ms is not None:
-                        if pg.time.get_ticks() > self.time:
-                            if return_rect:
-                                return key
-                            else:
-                                return True
                     else:
-                        if return_rect:
-                            return key
-                        else:
-                            return True
-        else:
-            if rect.collidepoint(mouse_pos):
-                if ms is not None:
-                    if pg.time.get_ticks() > self.time:
-                        if return_rect:
-                            return rect
-                        else:
-                            return True
+                        self.hover_start, self.hover_end = False, False
                 else:
-                    if return_rect:
-                        return rect
-                    else:
-                        return True
+                    raise ValueError('Values must be pygame.Rect objects')
+        # elif type(rect) == dict:
+        #     for key, rct in rect.items():
+        #         if rct.collidepoint(mouse_pos):
+        #             if ms is not None:
+        #                 if pg.time.get_ticks() > self.time + ms:
+        #                     return key
+        #             else:
+        #                 return key
+        elif isinstance(rect, pg.Rect):
+            if rect.collidepoint(mouse_pos):
+                if not self.hover_start:
+                    self.reset()
+                self.hover_end = pg.time.get_ticks() > self.time + ms
+                if self.hover_start and self.hover_end:
+                    return rect
+            else:
+                self.hover_start, self.hover_end = False, False
+        else:
+            raise ValueError('Value must be a pygame.Rect object')
 
 
 class Sheet:

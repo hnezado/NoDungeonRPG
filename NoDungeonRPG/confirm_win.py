@@ -41,8 +41,9 @@ class ConfirmWindow:
 		self.msg_padding = (20, 20)
 
 		self.msgs = {
+			"quit": "Do you want to quit?",
 			"main_menu": "Do you want to go to the main menu?",
-			"quit": "Do you want to quit?"
+			"new_game": "Do you want to start a new game?"
 		}
 		self._confirmation_text = ''
 
@@ -69,7 +70,7 @@ class ConfirmWindow:
 
 	@mode.setter
 	def mode(self, value):
-		if value in self.msgs.keys():
+		if value in self.msgs.keys() or value is None:
 			self._mode = value
 		else:
 			raise ValueError(f'Value must be in {self.msgs.keys()}')
@@ -85,12 +86,21 @@ class ConfirmWindow:
 				for btn in self.btns.keys():
 					self.btns[btn].draw_button()
 
+	def open(self, mode):
+		self.set_mode(mode)
+		self.active = True
+
+	def close(self):
+		self.set_mode(None)
+		self.active = False
+
 	def set_mode(self, mode):
 		"""Sets the confirmation window mode and its message"""
 
 		self.mode = mode
 
-		self.msg = text(self.msgs[self.mode], font["info"], 24, color["black"], max_length=24)
-		self.msg_pos = [(self.pos[0] + self.rect.w * 0.5 - line.get_width() * 0.5,
-						 self.pos[1] + self.msg_padding[1] + index * line.get_height() + 2)
-						for index, line in enumerate(self.msg)]
+		if self.mode:
+			self.msg = text(self.msgs[self.mode], font["info"], 24, color["black"], max_length=24)
+			self.msg_pos = [(self.pos[0] + self.rect.w * 0.5 - line.get_width() * 0.5,
+							 self.pos[1] + self.msg_padding[1] + index * line.get_height() + 2)
+							for index, line in enumerate(self.msg)]

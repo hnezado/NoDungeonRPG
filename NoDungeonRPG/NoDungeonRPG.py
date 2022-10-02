@@ -93,11 +93,19 @@
 #             IOGUI.draw_menu()
 #             IOAtlas.check_transition()
 
+from cursor import Cursor
 from confirm_win import ConfirmWindow
 from menu import *
 from main_menu import MainMenu
 from controls import Controls
 import os
+import json
+
+
+def load_settings():
+
+    with open('config/settings.json') as j:
+        return json.load(j)
 
 
 if __name__ == "__main__":
@@ -108,33 +116,37 @@ if __name__ == "__main__":
     pg.display.set_caption('NoDungeonRPG')
     scr_dim = [1024, 768]
     scr = pg.display.set_mode(scr_dim)
+
     default_clock = 60
     timer = 0
-    cursor = 'data/images/gui/cursor24.png'
-    mouse_pos = (0, 0)
-    tile_w, tile_h = 64, 64
-    info_font = 'data/fonts/germania.ttf'
 
+    settings = load_settings()
+
+    cursor = Cursor(scr)
+    cursor.set_img('data/images/gui/cursor24.png')
     confirm_win = ConfirmWindow(scr, scr_dim)
-    menu = Menu(scr, scr_dim)
+    menu = Menu(scr, scr_dim, settings)
     main_menu = MainMenu(scr, menu)
-    controls = Controls(confirm_win, menu, main_menu)
+    controls = Controls(cursor, confirm_win, menu, main_menu, settings)
     # IOGUI.check_saved_games()
     # game(first_load=True)
+
     while True:
 
         for event in pg.event.get():
             controls.main(event)
+        if controls.check_states():
+            settings = load_settings()
 
         main_menu.display()
         # game()
         menu.display()
         confirm_win.display()
 
-        # IOGUI.draw_cursor()
+        cursor.display()
 
         pg.display.update()
-        # clock(default_clock)
+        clock(default_clock)
 
         # sett.timer = pg.time.get_ticks()
 

@@ -2,9 +2,11 @@ from pygame_utilities import *
 
 
 class Menu:
-    def __init__(self, scr, scr_dim):
+    def __init__(self, scr, scr_dim, settings):
         self.scr = scr
         self.scr_w, self.scr_h = scr_dim
+        self.settings = settings
+
         self.img_bg = pg.image.load("data/images/gui/menu_bg.png").convert_alpha()
         self.img_save = Sheet("data/images/gui/save_game.png", (5, 1))
         self.img_delete = Sheet("data/images/gui/delete_game.png", (3, 1))
@@ -15,41 +17,68 @@ class Menu:
         self.txt_btn_back = text('Back', font_style=font["info"], font_size=30, color=color["black"])[0]
 
         self._active = False
-        self._mode = None
         self._layer = None
 
-        self.btn_back = Button(
-            self.scr,
-            pos=self.txt_btn_back.get_rect(center=(self.pos[0]+self.rect.w*0.5, self.pos[1]+self.rect.h*0.9)),
-            hover_on=True, img=self.txt_btn_back,
-            img_hover=text('Back', font_style=font["info"], font_size=30, color=color["white"])[0],
-            img_pressed=text('Back', font_style=font["info"], font_size=30, color=color["grey"])[0])
-        self.sockets_load = {
-            "bg": {
-                num: Button(
-                    self.scr,
-                    pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
-                         self.pos[1] + self.rect.h * (0.15 + (0.20 * (num - 1))) - self.img_save.crop_h * 0.5),
-                    img=self.img_save.sheet.subsurface(self.img_save.crops[0]),
-                    img_pressed=self.img_save.sheet.subsurface(self.img_save.crops[1])) for num in range(1, 5)},
-
-            # "text": {
-            #     1: Button(
-            #         self.scr, pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save_game.crop_w * 0.5,
-            #                        self.pos[1] + self.rect.h * 0.15 - self.img_save_game.crop_h * 0.5),
-            #         img=self.img_
-            #     ),
-            #     2: Button(
-            #
-            #     ),
-            #     3: Button(
-            #
-            #     ),
-            #     4: Button(
-            #
-            #     ),
-            # }
+        self.btns = {
+            "load": {
+                "bg": {
+                    num: Button(
+                        self.scr,
+                        pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
+                             self.pos[1] + self.rect.h * (0.15 + (0.20 * (num - 1))) - self.img_save.crop_h * 0.5),
+                        img=self.img_save.sheet.subsurface(self.img_save.crops[0]),
+                        img_pressed=self.img_save.sheet.subsurface(self.img_save.crops[1]))
+                    for num in range(1, 5)
+                },
+                "text": {
+                    num: str(num)
+                    for num in range(1, 5)
+                },
+            },
+            "settings": {
+                'sound': {
+                    "enabled": Button(
+                        self.scr,
+                        pos=text('Sound on', font_style=font["info"], font_size=30, color=color["green"])[0].get_rect(
+                            center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
+                        hover_on=True,
+                        img=text('Sound on', font_style=font["info"], font_size=30, color=color["green"])[0],
+                        img_hover=text('Sound on', font_style=font["info"], font_size=30, color=color["white"])[0],
+                        img_pressed=text('Sound on', font_style=font["info"], font_size=30, color=color["grey"])[0]
+                    ),
+                    "disabled": Button(
+                        self.scr,
+                        pos=text('Sound off', font_style=font["info"], font_size=30, color=color["red"])[0].get_rect(
+                            center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
+                        hover_on=True,
+                        img=text('Sound off', font_style=font["info"], font_size=30, color=color["red"])[0],
+                        img_hover=text('Sound off', font_style=font["info"], font_size=30, color=color["white"])[0],
+                        img_pressed=text('Sound off', font_style=font["info"], font_size=30, color=color["grey"])[0]
+                    ),
+                }
+            },
+            "back": Button(
+                self.scr,
+                pos=self.txt_btn_back.get_rect(center=(self.pos[0]+self.rect.w*0.5, self.pos[1]+self.rect.h*0.9)),
+                hover_on=True, img=self.txt_btn_back,
+                img_hover=text('Back', font_style=font["info"], font_size=30, color=color["white"])[0],
+                img_pressed=text('Back', font_style=font["info"], font_size=30, color=color["grey"])[0])
         }
+
+        #     "text": {
+        #         1: Button(
+        #
+        #         ),
+        #         2: Button(
+        #
+        #         ),
+        #         3: Button(
+        #
+        #         ),
+        #         4: Button(
+        #
+        #         ),
+        #     }
 
         # self.ingame_menu_button = Button(self.screen, bg=self.img_but_bg150_sh, icon=self.img_but_icon_ingame_menu,
         #                                  sheet_index=0, pos=(850, 694))
@@ -195,44 +224,44 @@ class Menu:
             raise ValueError('Value must be a boolean')
 
     @property
-    def mode(self):
-        return self._mode
-
-    @mode.setter
-    def mode(self, value):
-        valid_values = ["main_menu", "ingame"]
-        if value in valid_values:
-            self._mode = value
-        else:
-            raise ValueError(f'Value must be in {valid_values}')
-
-    @property
     def layer(self):
         return self._layer
 
     @layer.setter
     def layer(self, value):
-        valid_values = [None, "load", "new_game", "settings"]
-        if value in valid_values:
+        valid_values = ["load", "new_game", "settings"]
+        if value in valid_values or value is None:
             self._layer = value
         else:
             raise ValueError(f'Value must be in {valid_values}')
 
     def display(self):
         if self.active:
-            if self.mode == 'main_menu':
-                self.scr.blit(self.img_bg, self.pos)
-                if self.layer == 'load':
-                    for socket, btn_bg in self.sockets_load["bg"].items():
-                        btn_bg.draw_button()
-                    self.btn_back.draw_button()
-                elif self.layer == 'new_game':
-                    self.btn_back.draw_button()
-                elif self.layer == 'settings':
-                    self.btn_back.draw_button()
-            elif self.mode == "ingame":
-                self.scr.blit(self.img_bg, self.pos)
+            self.scr.blit(self.img_bg, self.pos)
+            if self.layer == 'main':
                 pass
+            elif self.layer == 'load':
+                for socket, btn_bg in self.btns["load"]["bg"].items():
+                    btn_bg.draw_button()
+                for socket, txt in self.btns["load"]["text"].items():
+                    pass
+                self.btns["back"].draw_button()
+            elif self.layer == 'save':
+                pass
+            elif self.layer == "settings":
+                if self.settings["sound"] == "enabled":
+                    self.btns["settings"]["sound"]["enabled"].draw_button()
+                elif self.settings["sound"] == "disabled":
+                    self.btns["settings"]["sound"]["disabled"].draw_button()
+                self.btns["back"].draw_button()
+
+    def open(self, layer):
+        self.layer = layer
+        self.active = True
+
+    def close(self):
+        self.layer = None
+        self.active = False
 
     def load(self):
         pass
@@ -240,8 +269,8 @@ class Menu:
     def new_game(self):
         pass
 
-    def settings(self):
-        pass
-
-    def quit(self):
-        pass
+    def switch_sound(self):
+        if self.settings['sound'] == "enabled":
+            self.settings["sound"] = "disabled"
+        elif self.settings["sound"] == "disabled":
+            self.settings["sound"] = "enabled"
