@@ -1,3 +1,4 @@
+import pygame
 import pygame as pg
 import json
 from pygame_utilities import mouse_down, mouse_up
@@ -18,6 +19,7 @@ class Controls:
         self.hovering_objs = []
 
         self.settings_change = False
+        self.game_saves_change = False
         self.set_active("main_menu")
 
     @property
@@ -33,6 +35,8 @@ class Controls:
             raise ValueError('Value must be a 2 integers tuple')
 
     def is_hovering(self, mouse_pos, hvr_rect, ms=0):
+        """Creates MouseHover instance for the rect (if not created) and checks if the rect has a MouseHover instance"""
+
         if hvr_rect not in [rct for rct, obj in self.hovering_objs]:
             self.hovering_objs.append((hvr_rect, MouseHover()))
 
@@ -40,7 +44,7 @@ class Controls:
         return obj.hover(mouse_pos, hvr_rect, ms)
 
     def check_states(self):
-        """Checks the states even when there are no events (settings, hovering)"""
+        """Checks the states even when there are no events (hovering)"""
 
         if self.menu.active and not self.confirm_win.active:
             if self.menu.layer == "load":
@@ -69,16 +73,21 @@ class Controls:
                 else:
                     self.menu.btns["back"].hovering = False
 
+    def check_changes(self):
         if self.settings_change:
             self.settings_change = False
-            return True
+            return "settings"
+        elif self.game_saves_change:
+            self.game_saves_change = False
+            return "game_saves"
 
     def main(self, event):
         self.mouse_pos = pg.mouse.get_pos()
         self.cursor.pos = self.mouse_pos
 
         if event.type == pg.QUIT:
-            self.confirm_win.open('quit')
+            pg.quit()
+            quit()
 
         self.ctrl_main_menu(event)
         self.ctrl_menu(event)
@@ -129,6 +138,8 @@ class Controls:
                     self.confirm_win.btns['accept'].pressed = True
                 if self.confirm_win.btns['accept'].pressed:
                     if mouse_up(event, 1, self.confirm_win.btns['accept']):
+                        self.menu.new_game()
+                        self.game_saves_change = True
                         self.confirm_win.close()
 
                 if mouse_down(event, 1, self.confirm_win.btns['cancel']):

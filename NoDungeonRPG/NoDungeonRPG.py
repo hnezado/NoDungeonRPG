@@ -97,15 +97,42 @@ from cursor import Cursor
 from confirm_win import ConfirmWindow
 from menu import *
 from main_menu import MainMenu
+from game import Game
 from controls import Controls
 import os
 import json
+import pickle
+
+
+def control_checkings():
+    global settings, games
+
+    controls.check_states()
+    change = controls.check_changes()
+    if change == "settings":
+        settings = load_settings()
+        menu.settings = settings
+        controls.settings = settings
+    elif change == "game_saves":
+        games = load_games()
+        menu.games = games
 
 
 def load_settings():
-
     with open('config/settings.json') as j:
         return json.load(j)
+
+
+def load_games():
+    game_saves = {num: None for num in range(1, 5)}
+    for game_save in os.listdir("../saves"):
+        try:
+            with open(f"../saves/{game_save}", "rb") as g:
+                game_saves[int(game_save.split(".dgn")[0][-1])] = pickle.load(g)
+        except PermissionError:
+            pass
+    print(game_saves)
+    return game_saves
 
 
 if __name__ == "__main__":
@@ -121,11 +148,13 @@ if __name__ == "__main__":
     timer = 0
 
     settings = load_settings()
+    games = load_games()
+    current_game = None
 
     cursor = Cursor(scr)
     cursor.set_img('data/images/gui/cursor24.png')
     confirm_win = ConfirmWindow(scr, scr_dim)
-    menu = Menu(scr, scr_dim, settings)
+    menu = Menu(scr, scr_dim, settings, games, Game)
     main_menu = MainMenu(scr, menu)
     controls = Controls(cursor, confirm_win, menu, main_menu, settings)
     # IOGUI.check_saved_games()
@@ -135,8 +164,7 @@ if __name__ == "__main__":
 
         for event in pg.event.get():
             controls.main(event)
-        if controls.check_states():
-            settings = load_settings()
+        control_checkings()
 
         main_menu.display()
         # game()

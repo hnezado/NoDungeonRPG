@@ -1,11 +1,14 @@
 from pygame_utilities import *
+import pickle
 
 
 class Menu:
-    def __init__(self, scr, scr_dim, settings):
+    def __init__(self, scr, scr_dim, settings, game_saves, game_class):
         self.scr = scr
         self.scr_w, self.scr_h = scr_dim
         self.settings = settings
+        self.game_saves = game_saves
+        self.game_class = game_class
 
         self.img_bg = pg.image.load("data/images/gui/menu_bg.png").convert_alpha()
         self.img_save = Sheet("data/images/gui/save_game.png", (5, 1))
@@ -266,8 +269,12 @@ class Menu:
     def load(self):
         pass
 
-    def new_game(self):
+    def save(self):
         pass
+
+    def new_game(self):
+        with open(f"../saves/save_game3.dgn", "wb") as g:
+            pickle.dump(self.game_class(), g)
 
     def switch_sound(self):
         if self.settings['sound'] == "enabled":
