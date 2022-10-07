@@ -1,12 +1,12 @@
-from pygame_utilities import *
+from pygame_utilities import Sheet, Button, blit_alpha
+import pygame as pg
 import time
 import random as r
+import general as gral
 
 
 class MainMenu:
-    def __init__(self, scr, menu):
-        self.scr = scr
-        self.menu = menu
+    def __init__(self):
         self.img_bg = pg.image.load("data/images/main_menu/main_menu_bg.png")
         # self.title = text(txt="No Dungeon RPG", font_style=info_font, font_size=60, color=col_white)[0]
         self.img_panel = pg.image.load("data/images/main_menu/main_menu_buttons_bg.png")
@@ -34,7 +34,7 @@ class MainMenu:
         self.btn_rect = pg.Rect(self.img_btn_bg150_sh.crops[0])
         self.btns = {
             "continue": Button(
-                self.scr,
+                gral.scr,
                 bg=self.img_btn_bg150_sh,
                 icon=self.img_btn_icons,
                 sheet_index=0,
@@ -42,7 +42,7 @@ class MainMenu:
                      self.panel["pos"][1] + self.panel["rect"].h * 0.5 - self.btn_rect.h * 0.5),
             ),
             "new_game": Button(
-                self.scr,
+                gral.scr,
                 bg=self.img_btn_bg150_sh,
                 icon=self.img_btn_icons,
                 sheet_index=1,
@@ -50,7 +50,7 @@ class MainMenu:
                      self.btn_rect.w * 0.5, self.panel["pos"][1] + self.panel["rect"].h * 0.5 - self.btn_rect.h * 0.5),
             ),
             "settings": Button(
-                self.scr,
+                gral.scr,
                 bg=self.img_btn_bg150_sh,
                 icon=self.img_btn_icons,
                 sheet_index=2,
@@ -58,7 +58,7 @@ class MainMenu:
                      self.btn_rect.w * 0.5, self.panel["pos"][1] + self.panel["rect"].h * 0.5 - self.btn_rect.h * 0.5),
             ),
             "quit": Button(
-                self.scr,
+                gral.scr,
                 bg=self.img_btn_bg150_sh,
                 icon=self.img_btn_icons,
                 sheet_index=3,
@@ -72,7 +72,7 @@ class MainMenu:
         """Display the main menu"""
 
         if self.active:
-            self.scr.blit(self.img_bg, (0, 0))
+            gral.scr.blit(self.img_bg, (0, 0))
             self.anim_lightnings()
             # self.scr.blit(self.title, (disp_w * 0.5 - self.title.get_width() * 0.5, disp_h * 0.125))
             self.draw_buttons()
@@ -91,7 +91,7 @@ class MainMenu:
                     self.ltng["sel"] = r.randint(1, 4)
                     self.ltng["anim"] = "in"
             if self.ltng["sel"]:
-                blit_alpha(self.scr, l_img[self.ltng["sel"]], (0, 0), self.ltng["opacity"])
+                blit_alpha(gral.scr, l_img[self.ltng["sel"]], (0, 0), self.ltng["opacity"])
             if self.ltng["anim"] == "in":
                 self.ltng["opacity"] += l_speed_in
                 if self.ltng["opacity"] >= 255:
@@ -111,33 +111,6 @@ class MainMenu:
     def draw_buttons(self):
         """Displays the main menu buttons"""
 
-        self.scr.blit(self.img_panel, self.panel["pos"])
+        gral.scr.blit(self.img_panel, self.panel["pos"])
         for but in self.btns.keys():
             self.btns[but].draw_button()
-
-    def continue_game(self):
-        self.menu.load()
-
-    def new_game(self):
-        """Creates a new game instance"""
-
-        self.menu.new_game()
-
-        # sett.current_game['date_time'] = None
-        # sett.current_game['current_char'] = None
-        # sett.current_game['current_map'] = None
-        # sett.current_game['blocking_objs'] = []
-        # sett.current_game['current_container'] = None
-        # sett.current_game['current_creature'] = None
-        # sett.current_game['previous_container'] = None
-        # sett.current_game['skills'] = None
-        # sett.current_game['equipped'] = {'helm': None, 'weapon': None, 'gloves': None, 'pants': None, 'boots': None,
-        #                                  'necklace': None, 'bag':  None, 'shoulder': None, 'armor': None, 'ring': None,
-        #                                  'shield': None, 'belt': None},
-        # sett.current_game['inv_items'] = generate_grid_status((6, 6), default_value=None)
-
-    def settings(self):
-        self.menu.settings()
-
-    def quit(self):
-        self.menu.quit()

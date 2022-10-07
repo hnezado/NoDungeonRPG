@@ -1,9 +1,9 @@
 from pygame_utilities import mouse_visible
+import general as gral
 
 
 class Cursor:
-    def __init__(self, scr, img_default=None):
-        self.scr = scr
+    def __init__(self, img_default=None):
         self.img_default = img_default
         self._img = self.img_default
         self.pos = (0, 0)
@@ -31,4 +31,4 @@ class Cursor:
 
     def display(self):
         if self.active:
-            mouse_visible(self.scr, image=self.img, mouse_pos=self.pos)
+            mouse_visible(gral.scr, image=self.img, mouse_pos=self.pos)

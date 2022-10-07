@@ -1,14 +1,14 @@
-from pygame_utilities import *
+from pygame_utilities import Sheet, text, merge_surfaces, Button, readable_text
+from game import Game
+import pygame as pg
 import pickle
+import time
+import general as gral
 
 
 class Menu:
-    def __init__(self, scr, scr_dim, settings, game_saves, game_class):
-        self.scr = scr
-        self.scr_w, self.scr_h = scr_dim
-        self.settings = settings
-        self.game_saves = game_saves
-        self.game_class = game_class
+    def __init__(self):
+        self.scr_w, self.scr_h = gral.scr_dim
 
         self.img_bg = pg.image.load("data/images/gui/menu_bg.png").convert_alpha()
         self.img_save = Sheet("data/images/gui/save_game.png", (5, 1))
@@ -17,56 +17,12 @@ class Menu:
         self.pos = (self.scr_w * .5 - self.img_bg.get_width() * .5, self.scr_h * .5 - self.img_bg.get_height() * .5)
         self.rect = self.img_bg.get_rect()
 
-        self.txt_btn_back = text('Back', font_style=font["info"], font_size=30, color=color["black"])[0]
+        self.txt_btn_back = text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["black"])[0]
 
         self._active = False
         self._layer = None
 
-        self.btns = {
-            "load": {
-                "bg": {
-                    num: Button(
-                        self.scr,
-                        pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
-                             self.pos[1] + self.rect.h * (0.15 + (0.20 * (num - 1))) - self.img_save.crop_h * 0.5),
-                        img=self.img_save.sheet.subsurface(self.img_save.crops[0]),
-                        img_pressed=self.img_save.sheet.subsurface(self.img_save.crops[1]))
-                    for num in range(1, 5)
-                },
-                "text": {
-                    num: str(num)
-                    for num in range(1, 5)
-                },
-            },
-            "settings": {
-                'sound': {
-                    "enabled": Button(
-                        self.scr,
-                        pos=text('Sound on', font_style=font["info"], font_size=30, color=color["green"])[0].get_rect(
-                            center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
-                        hover_on=True,
-                        img=text('Sound on', font_style=font["info"], font_size=30, color=color["green"])[0],
-                        img_hover=text('Sound on', font_style=font["info"], font_size=30, color=color["white"])[0],
-                        img_pressed=text('Sound on', font_style=font["info"], font_size=30, color=color["grey"])[0]
-                    ),
-                    "disabled": Button(
-                        self.scr,
-                        pos=text('Sound off', font_style=font["info"], font_size=30, color=color["red"])[0].get_rect(
-                            center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
-                        hover_on=True,
-                        img=text('Sound off', font_style=font["info"], font_size=30, color=color["red"])[0],
-                        img_hover=text('Sound off', font_style=font["info"], font_size=30, color=color["white"])[0],
-                        img_pressed=text('Sound off', font_style=font["info"], font_size=30, color=color["grey"])[0]
-                    ),
-                }
-            },
-            "back": Button(
-                self.scr,
-                pos=self.txt_btn_back.get_rect(center=(self.pos[0]+self.rect.w*0.5, self.pos[1]+self.rect.h*0.9)),
-                hover_on=True, img=self.txt_btn_back,
-                img_hover=text('Back', font_style=font["info"], font_size=30, color=color["white"])[0],
-                img_pressed=text('Back', font_style=font["info"], font_size=30, color=color["grey"])[0])
-        }
+        self.btns = self.update_btns()
 
         #     "text": {
         #         1: Button(
@@ -238,23 +194,102 @@ class Menu:
         else:
             raise ValueError(f'Value must be in {valid_values}')
 
+    def update_btns(self):
+        btns = {
+            "load": {
+                "bg": {
+                    "existent": {
+                        socket_num: Button(
+                            gral.scr,
+                            pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
+                                 self.pos[1] + self.rect.h * (0.15 + (0.20 * (socket_num - 1)))
+                                 - self.img_save.crop_h * 0.5),
+                            img=self.img_save.sheet.subsurface(self.img_save.crops[0]),
+                            img_pressed=self.img_save.sheet.subsurface(self.img_save.crops[1]))
+                        for socket_num in range(1, 5) if gral.saved_games[socket_num]
+                    },
+                    "non_existent": {
+                        num: Button(
+                            gral.scr,
+                            pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
+                                 self.pos[1] + self.rect.h * (0.15 + (0.20 * (num - 1))) - self.img_save.crop_h * 0.5),
+                            img=self.img_save.sheet.subsurface(self.img_save.crops[4]))
+                        for num in range(1, 5)
+                    },
+                },
+                "text": {
+                    "img": {
+                        socket_num: merge_surfaces(
+                            text(
+                                f'{gral.saved_games[socket_num].current_char.name} ('
+                                f'{gral.saved_games[socket_num].current_char.char_class})$'
+                                f'{readable_text(gral.saved_games[socket_num].current_map.name, "_")}$'
+                                f'{gral.saved_games[socket_num].date_time}',
+                                font_style=gral.font["info"], font_size=15, color=gral.color["white"]),
+                            centered='start'
+                        ) for socket_num in range(1, 5) if gral.saved_games[socket_num]
+                    },
+                    "pos": {
+                        socket_num: (
+                            (self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5) + 90,
+                            (self.pos[1] + self.rect.h * (0.15 + (0.20 * (socket_num - 1)))
+                             - self.img_save.crop_h * 0.5) + 10)
+                        for socket_num in range(1, 5) if gral.saved_games[socket_num]
+                    }
+                }
+            },
+            "settings": {
+                'sound': {
+                    "enabled": Button(
+                        gral.scr,
+                        pos=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["green"])[0].get_rect(
+                            center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
+                        hover_on=True,
+                        img=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["green"])[0],
+                        img_hover=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
+                        img_pressed=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0]
+                    ),
+                    "disabled": Button(
+                        gral.scr,
+                        pos=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["red"])[0].get_rect(
+                            center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
+                        hover_on=True,
+                        img=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["red"])[0],
+                        img_hover=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
+                        img_pressed=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0]
+                    ),
+                }
+            },
+            "back": Button(
+                gral.scr,
+                pos=self.txt_btn_back.get_rect(center=(self.pos[0]+self.rect.w*0.5, self.pos[1]+self.rect.h*0.9)),
+                hover_on=True, img=self.txt_btn_back,
+                img_hover=text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
+                img_pressed=text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0])
+        }
+
+        return btns
+
     def display(self):
         if self.active:
-            self.scr.blit(self.img_bg, self.pos)
+            gral.scr.blit(self.img_bg, self.pos)
             if self.layer == 'main':
                 pass
             elif self.layer == 'load':
-                for socket, btn_bg in self.btns["load"]["bg"].items():
-                    btn_bg.draw_button()
-                for socket, txt in self.btns["load"]["text"].items():
-                    pass
+                for socket, btn_bg in self.btns["load"]["bg"]["existent"].items():
+                    if gral.saved_games[socket]:
+                        btn_bg.draw_button()
+                        gral.scr.blit(self.btns["load"]["text"]["img"][socket],
+                                      self.btns["load"]["text"]["pos"][socket])
+                    else:
+                        self.btns["load"]["bg"]["non_existent"][socket].draw_button()
                 self.btns["back"].draw_button()
             elif self.layer == 'save':
                 pass
             elif self.layer == "settings":
-                if self.settings["sound"] == "enabled":
+                if gral.settings["sound"] == "enabled":
                     self.btns["settings"]["sound"]["enabled"].draw_button()
-                elif self.settings["sound"] == "disabled":
+                elif gral.settings["sound"] == "disabled":
                     self.btns["settings"]["sound"]["disabled"].draw_button()
                 self.btns["back"].draw_button()
 
@@ -266,18 +301,32 @@ class Menu:
         self.layer = None
         self.active = False
 
-    def load(self):
-        pass
+    def save(self, socket):
+        with open(f"../saves/save_game{socket}.dgn", "wb") as g:
+            pickle.dump(gral.current_game, g)
 
-    def save(self):
-        pass
+    @staticmethod
+    def new_game():
+        with open(f"../saves/save_game4.dgn", "wb") as g:
+            pickle.dump(Game(), g)
+            time.sleep(10)
 
-    def new_game(self):
-        with open(f"../saves/save_game3.dgn", "wb") as g:
-            pickle.dump(self.game_class(), g)
+        # sett.current_game['date_time'] = None
+        # sett.current_game['current_char'] = None
+        # sett.current_game['current_map'] = None
+        # sett.current_game['blocking_objs'] = []
+        # sett.current_game['current_container'] = None
+        # sett.current_game['current_creature'] = None
+        # sett.current_game['previous_container'] = None
+        # sett.current_game['skills'] = None
+        # sett.current_game['equipped'] = {'helm': None, 'weapon': None, 'gloves': None, 'pants': None,
+        #                                  'boots': None, 'necklace': None, 'bag':  None, 'shoulder': None,
+        #                                  'armor': None, 'ring': None, 'shield': None, 'belt': None},
+        # sett.current_game['inv_items'] = generate_grid_status((6, 6), default_value=None)
 
-    def switch_sound(self):
-        if self.settings['sound'] == "enabled":
-            self.settings["sound"] = "disabled"
-        elif self.settings["sound"] == "disabled":
-            self.settings["sound"] = "enabled"
+    @staticmethod
+    def switch_sound():
+        if gral.settings['sound'] == "enabled":
+            gral.settings["sound"] = "disabled"
+        elif gral.settings["sound"] == "disabled":
+            gral.settings["sound"] = "enabled"

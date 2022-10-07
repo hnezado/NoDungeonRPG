@@ -1,10 +1,11 @@
-from pygame_utilities import *
+from pygame_utilities import Sheet, Button, text
+import pygame as pg
+import general as gral
 
 
 class ConfirmWindow:
-	def __init__(self, scr, scr_dim):
-		self.scr = scr
-		self.scr_w, self.scr_h = scr_dim
+	def __init__(self):
+		self.scr_w, self.scr_h = gral.scr_dim
 		self.img_btn_bg100 = Sheet("data/images/gui/but_bg100.png", dimensions=(2, 1))
 		self.imgs = {
 			"bg": pg.image.load("data/images/confirm_window/confirm_win_bg.png").convert_alpha(),
@@ -23,14 +24,14 @@ class ConfirmWindow:
 		}
 		self.btns = {
 			"accept": Button(
-				self.scr,
+				gral.scr,
 				bg=self.imgs["btn_bg100"],
 				icon=self.imgs["btn_icons"],
 				sheet_index=0,
 				pos=self.btn_pos["accept"],
 			),
 			"cancel": Button(
-				self.scr,
+				gral.scr,
 				bg=self.imgs["btn_bg100"],
 				icon=self.imgs["btn_icons"],
 				sheet_index=1,
@@ -42,13 +43,17 @@ class ConfirmWindow:
 
 		self.msgs = {
 			"quit": "Do you want to quit?",
-			"main_menu": "Do you want to go to the main menu?",
-			"new_game": "Do you want to start a new game?"
+			"main_menu": "Go to the main menu?",
+			"new_game": "Start a new game?",
+			"load": "Load this game?",
+			"save": "Save this game?"
 		}
 		self._confirmation_text = ''
 
 		self.msg = None
 		self.msg_pos = []
+
+		self.temp_kwargs = None
 
 		self._mode = None
 		self._active = False
@@ -75,20 +80,24 @@ class ConfirmWindow:
 		else:
 			raise ValueError(f'Value must be in {self.msgs.keys()}')
 
+	def clear_temp_kwargs(self):
+		self.temp_kwargs = None
+
 	def display(self):
 		"""Displays the confirmation window"""
 
 		if self.active:
 			if self.msg:
-				self.scr.blit(self.imgs["bg"], self.pos)
+				gral.scr.blit(self.imgs["bg"], self.pos)
 				for index, line in enumerate(self.msg):
-					self.scr.blit(self.msg[index], self.msg_pos[index])
+					gral.scr.blit(self.msg[index], self.msg_pos[index])
 				for btn in self.btns.keys():
 					self.btns[btn].draw_button()
 
-	def open(self, mode):
+	def open(self, mode, **kwargs):
 		self.set_mode(mode)
 		self.active = True
+		self.temp_kwargs = kwargs
 
 	def close(self):
 		self.set_mode(None)
@@ -100,7 +109,7 @@ class ConfirmWindow:
 		self.mode = mode
 
 		if self.mode:
-			self.msg = text(self.msgs[self.mode], font["info"], 24, color["black"], max_length=24)
+			self.msg = text(self.msgs[self.mode], gral.font["info"], 24, gral.color["black"], max_length=24)
 			self.msg_pos = [(self.pos[0] + self.rect.w * 0.5 - line.get_width() * 0.5,
 							 self.pos[1] + self.msg_padding[1] + index * line.get_height() + 2)
 							for index, line in enumerate(self.msg)]

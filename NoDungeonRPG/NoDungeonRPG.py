@@ -75,108 +75,95 @@
 #         IOCombat.button_back.pressed = False
 #
 #
-# def game(first_load=False):
+# def game():
 #     """Displays every ingame element on the screen"""
-#
-#     if first_load:
+
+#     if sett.active_screen == "game":
 #         sett.current_game["current_map"].draw_map()
 #         IOGUI.draw_gui()
 #         IOCombat.draw_combat()
 #         IOGUI.draw_menu()
 #         IOAtlas.check_transition()
-#
-#     else:
-#         if sett.active_screen == "game":
-#             sett.current_game["current_map"].draw_map()
-#             IOGUI.draw_gui()
-#             IOCombat.draw_combat()
-#             IOGUI.draw_menu()
-#             IOAtlas.check_transition()
 
-from cursor import Cursor
+from pygame_utilities import clock
+from cursor import *
 from confirm_win import ConfirmWindow
-from menu import *
+from menu import Menu
 from main_menu import MainMenu
-from game import Game
+from ingame import InGame
 from controls import Controls
-import os
+import pygame as pg
 import json
+import os
 import pickle
+import general as gral
 
 
-def control_checkings():
-    global settings, games
+def controls_update():
+    """Maintains updated some global variables"""
 
-    controls.check_states()
-    change = controls.check_changes()
-    if change == "settings":
-        settings = load_settings()
-        menu.settings = settings
-        controls.settings = settings
-    elif change == "game_saves":
-        games = load_games()
-        menu.games = games
+    gral.controls.check_states()
+    updates = gral.controls.check_updates()
+    if updates:
+        if "settings" in updates:
+            gral.settings = load_settings()
+        if "saved_games" in updates:
+            gral.saved_games = load_games()
+            gral.menu.update_btns()
 
 
 def load_settings():
+    """Loads the settings file content"""
+
     with open('config/settings.json') as j:
         return json.load(j)
 
 
 def load_games():
-    game_saves = {num: None for num in range(1, 5)}
+    """Loads the saved game files content"""
+
+    games = {num: None for num in range(1, 5)}
     for game_save in os.listdir("../saves"):
         try:
             with open(f"../saves/{game_save}", "rb") as g:
-                game_saves[int(game_save.split(".dgn")[0][-1])] = pickle.load(g)
+                games[int(game_save.split(".dgn")[0][-1])] = pickle.load(g)
         except PermissionError:
             pass
-    print(game_saves)
-    return game_saves
+
+    return games
 
 
 if __name__ == "__main__":
 
-    pg.init()
+    gral.settings = load_settings()
+    gral.saved_games = load_games()
 
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pg.display.set_caption('NoDungeonRPG')
-    scr_dim = [1024, 768]
-    scr = pg.display.set_mode(scr_dim)
+    gral.cursor = Cursor()
+    gral.cursor.set_img("data/images/gui/cursor24.png")
+    gral.confirm_win = ConfirmWindow()
+    gral.menu = Menu()
+    gral.main_menu = MainMenu()
+    gral.ingame = InGame()
+    gral.controls = Controls()
 
-    default_clock = 60
-    timer = 0
-
-    settings = load_settings()
-    games = load_games()
-    current_game = None
-
-    cursor = Cursor(scr)
-    cursor.set_img('data/images/gui/cursor24.png')
-    confirm_win = ConfirmWindow(scr, scr_dim)
-    menu = Menu(scr, scr_dim, settings, games, Game)
-    main_menu = MainMenu(scr, menu)
-    controls = Controls(cursor, confirm_win, menu, main_menu, settings)
-    # IOGUI.check_saved_games()
-    # game(first_load=True)
+    from pygame_utilities import text, merge_surfaces
 
     while True:
 
         for event in pg.event.get():
-            controls.main(event)
-        control_checkings()
+            gral.controls.main(event)
+        controls_update()
 
-        main_menu.display()
-        # game()
-        menu.display()
-        confirm_win.display()
+        # gral.ingame.display()
+        gral.main_menu.display()
+        gral.menu.display()
+        gral.confirm_win.display()
 
-        cursor.display()
+        # gral.cursor.display()
 
         pg.display.update()
-        clock(default_clock)
+        clock(gral.default_clock)
 
         # sett.timer = pg.time.get_ticks()
 
         # refresh_controls()
-        pass

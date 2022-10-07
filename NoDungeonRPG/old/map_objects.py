@@ -9,7 +9,7 @@ generic_containers = []
 # 1.Create subclass itself with the required variables (self.name, self.type...)
 # 2.Add update_mobj() at the end of the new __init__() with the required update strings
 # 3.Add the class to create_mobj('instance.name')
-# 4.Create an instance if the subclass from 'map.py' and give it a nickname (Fdf = [DesertFloor()])
+# 4.Create an instance if the subclass from 'map_old.py' and give it a nickname (Fdf = [DesertFloor()])
 
 # Depth must be at least mov_speed higher than y pos to act like a "3d block"
 mobj_imgs = {

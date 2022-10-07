@@ -1,4 +1,4 @@
-from map import *
+from map_old import *
 
 
 class Atlas:

@@ -1,25 +1,6 @@
 import pygame as pg
 import pickle as pkl
 
-font = {
-    "info": "data/fonts/germania.ttf"
-        }
-
-color = {
-    "black": (0, 0, 0),
-    "white": (255, 255, 255),
-    "red": (255, 0, 0),
-    "green_lime": (0, 255, 0),
-    "blue": (0, 0, 255),
-    "purple": (128, 0, 128),
-    "gold": (218, 165, 32),
-    "green": (0, 128, 0),
-    "yellow": (255, 255, 0),
-    "blue_navy": (0, 0, 128),
-    "grey": (128, 128, 128),
-    "dark_red": (128, 0, 0),
-}
-
 
 def savegame(data, filename):
     """Saves the game status"""
@@ -161,6 +142,46 @@ def text(
         else:
             lines_list.append(str_main)
             return lines_list
+
+
+def merge_surfaces(surfaces, direction='vertical', space_between=2, centered='center'):
+
+    parent_surf = None
+    accumulator = 0
+    if direction == 'vertical':
+        parent_dim = [
+            max([surf.get_width() for surf in surfaces]),
+            sum([surf.get_height() + space_between for surf in surfaces]) - space_between
+        ]
+        parent_surf = pg.Surface(parent_dim, pg.SRCALPHA)
+        for surf in surfaces:
+            pos = ()
+            if centered == 'start':
+                pos = (0, accumulator)
+            elif centered == 'center':
+                pos = (parent_surf.get_width() / 2 - surf.get_width() / 2, accumulator)
+            elif centered == 'end':
+                pos = (parent_dim[0] - surf.get_width(), accumulator)
+            parent_surf.blit(surf, pos)
+            accumulator += surf.get_height() + space_between
+    elif direction == 'horizontal':
+        parent_dim = [
+            sum([surf.get_width() + space_between for surf in surfaces]) - space_between,
+            max([surf.get_height() for surf in surfaces]),
+        ]
+        parent_surf = pg.Surface(parent_dim, pg.SRCALPHA)
+        for surf in surfaces:
+            pos = ()
+            if centered == 'start':
+                pos = (accumulator, 0)
+            elif centered == 'center':
+                pos = (accumulator, parent_surf.get_height() / 2 - surf.get_height() / 2)
+            elif centered == 'end':
+                pos = (accumulator, parent_dim[1] - surf.get_height())
+            parent_surf.blit(surf, pos)
+            accumulator += surf.get_width() + space_between
+
+    return parent_surf
 
 
 def blit_alpha(surface, img, pos, opacity, area=None):

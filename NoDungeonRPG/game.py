@@ -1,12 +1,14 @@
 from pygame_utilities import generate_grid_status
+from char import Character
+from map import Map
 
 
 class Game:
     def __init__(self):
         self.socket = 0
         self.date_time = None
-        self.current_char = None
-        self.current_map = None
+        self.current_char = Character('Th', 'Warrior')
+        self.current_map = Map('Herdion Town')
         self.blocking_objs = []
         self.current_container = None
         self.current_creature = None
