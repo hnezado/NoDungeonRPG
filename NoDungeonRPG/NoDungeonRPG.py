@@ -99,17 +99,27 @@ import pickle
 import general as gral
 
 
-def controls_update():
+def update(files=None, mode='a'):
     """Maintains updated some global variables"""
 
-    gral.controls.check_states()
-    updates = gral.controls.check_updates()
-    if updates:
-        if "settings" in updates:
-            gral.settings = load_settings()
-        if "saved_games" in updates:
-            gral.saved_games = load_games()
-            gral.menu.update_btns()
+    if mode == "r" or mode == "read":
+        if files:
+            if 'settings' in files:
+                gral.settings = load_settings()
+            if 'games' in files:
+                gral.saved_games = load_games()
+        else:
+            gral.controls.check_states()
+    elif mode == "w" or mode == "write":
+        if files:
+            if 'settings' in files:
+                with open('config/settings.json', 'w') as j:
+                    json.dump(gral.settings, j)
+            if 'games' in files:
+                with open('../saves/', 'w') as j:
+                    json.dump(gral.settings, j)
+    else:
+        raise ValueError("Value must be either read or write modes ('r' or 'w')")
 
 
 def load_settings():
@@ -135,8 +145,7 @@ def load_games():
 
 if __name__ == "__main__":
 
-    gral.settings = load_settings()
-    gral.saved_games = load_games()
+    update(files=['settings', 'games'])
 
     gral.cursor = Cursor()
     gral.cursor.set_img("data/images/gui/cursor24.png")
@@ -144,22 +153,26 @@ if __name__ == "__main__":
     gral.menu = Menu()
     gral.main_menu = MainMenu()
     gral.ingame = InGame()
-    gral.controls = Controls()
+    gral.controls = Controls(update)
+
+    gral.menu.update_btns()
 
     from pygame_utilities import text, merge_surfaces
+
+    print('saved_games:', gral.saved_games)
 
     while True:
 
         for event in pg.event.get():
             gral.controls.main(event)
-        controls_update()
+        update()
 
         # gral.ingame.display()
         gral.main_menu.display()
         gral.menu.display()
         gral.confirm_win.display()
 
-        # gral.cursor.display()
+        gral.cursor.display()
 
         pg.display.update()
         clock(gral.default_clock)

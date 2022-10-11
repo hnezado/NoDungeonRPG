@@ -2,42 +2,34 @@ from pygame_utilities import Sheet, text, merge_surfaces, Button, readable_text
 from game import Game
 import pygame as pg
 import pickle
-import time
 import general as gral
 
 
 class Menu:
     def __init__(self):
-        self.scr_w, self.scr_h = gral.scr_dim
+        self.imgs = {
+            "bg": pg.image.load("data/images/menu/bg.png").convert_alpha(),
+            "btns": {
+                "saved_games": Sheet("data/images/menu/saved_games.png", (5, 1)),
+                "delete_game": Sheet("data/images/menu/delete_game.png", (3, 1)),
+                "back": text("Back", font_style=gral.font["info"], font_size=30, color=gral.color["black"])[0],
+                "sound": {
+                    "enabled": text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["green"])[0],
+                    "disabled": text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["red"])[0]
+                },
+                "resume": text("Resume", font_style=gral.font["info"], font_size=30, color=gral.color["black"])[0],
+            },
+        }
 
-        self.img_bg = pg.image.load("data/images/gui/menu_bg.png").convert_alpha()
-        self.img_save = Sheet("data/images/gui/save_game.png", (5, 1))
-        self.img_delete = Sheet("data/images/gui/delete_game.png", (3, 1))
-
-        self.pos = (self.scr_w * .5 - self.img_bg.get_width() * .5, self.scr_h * .5 - self.img_bg.get_height() * .5)
-        self.rect = self.img_bg.get_rect()
-
-        self.txt_btn_back = text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["black"])[0]
+        self.pos = (gral.scr_dim[0] * .5 - self.imgs["bg"].get_width() * .5,
+                    gral.scr_dim[1] * .5 - self.imgs["bg"].get_height() * .5)
+        self.rect = self.imgs["bg"].get_rect()
 
         self._active = False
         self._layer = None
 
-        self.btns = self.update_btns()
-
-        #     "text": {
-        #         1: Button(
-        #
-        #         ),
-        #         2: Button(
-        #
-        #         ),
-        #         3: Button(
-        #
-        #         ),
-        #         4: Button(
-        #
-        #         ),
-        #     }
+        self.btns = None
+        self.update_btns()
 
         # self.ingame_menu_button = Button(self.screen, bg=self.img_but_bg150_sh, icon=self.img_but_icon_ingame_menu,
         #                                  sheet_index=0, pos=(850, 694))
@@ -195,26 +187,26 @@ class Menu:
             raise ValueError(f'Value must be in {valid_values}')
 
     def update_btns(self):
-        btns = {
+        self.btns = {
             "load": {
                 "bg": {
                     "existent": {
                         socket_num: Button(
                             gral.scr,
-                            pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
+                            pos=(self.pos[0] + self.rect.w * 0.5 - self.imgs["btns"]["saved_games"].crop_w * 0.5,
                                  self.pos[1] + self.rect.h * (0.15 + (0.20 * (socket_num - 1)))
-                                 - self.img_save.crop_h * 0.5),
-                            img=self.img_save.sheet.subsurface(self.img_save.crops[0]),
-                            img_pressed=self.img_save.sheet.subsurface(self.img_save.crops[1]))
+                                 - self.imgs["btns"]["saved_games"].crop_h * 0.5),
+                            img=self.imgs["btns"]["saved_games"].sheet.subsurface(self.imgs["btns"]["saved_games"].crops[0]),
+                            img_pressed=self.imgs["btns"]["saved_games"].sheet.subsurface(self.imgs["btns"]["saved_games"].crops[1]))
                         for socket_num in range(1, 5) if gral.saved_games[socket_num]
                     },
                     "non_existent": {
-                        num: Button(
+                        socket_num: Button(
                             gral.scr,
-                            pos=(self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5,
-                                 self.pos[1] + self.rect.h * (0.15 + (0.20 * (num - 1))) - self.img_save.crop_h * 0.5),
-                            img=self.img_save.sheet.subsurface(self.img_save.crops[4]))
-                        for num in range(1, 5)
+                            pos=(self.pos[0] + self.rect.w * 0.5 - self.imgs["btns"]["saved_games"].crop_w * 0.5,
+                                 self.pos[1] + self.rect.h * (0.15 + (0.20 * (socket_num - 1))) - self.imgs["btns"]["saved_games"].crop_h * 0.5),
+                            img=self.imgs["btns"]["saved_games"].sheet.subsurface(self.imgs["btns"]["saved_games"].crops[4]))
+                        for socket_num in range(1, 5)
                     },
                 },
                 "text": {
@@ -231,9 +223,9 @@ class Menu:
                     },
                     "pos": {
                         socket_num: (
-                            (self.pos[0] + self.rect.w * 0.5 - self.img_save.crop_w * 0.5) + 90,
+                            (self.pos[0] + self.rect.w * 0.5 - self.imgs["btns"]["saved_games"].crop_w * 0.5) + 90,
                             (self.pos[1] + self.rect.h * (0.15 + (0.20 * (socket_num - 1)))
-                             - self.img_save.crop_h * 0.5) + 10)
+                             - self.imgs["btns"]["saved_games"].crop_h * 0.5) + 10)
                         for socket_num in range(1, 5) if gral.saved_games[socket_num]
                     }
                 }
@@ -242,19 +234,19 @@ class Menu:
                 'sound': {
                     "enabled": Button(
                         gral.scr,
-                        pos=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["green"])[0].get_rect(
+                        pos=self.imgs["btns"]["sound"]["enabled"].get_rect(
                             center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
                         hover_on=True,
-                        img=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["green"])[0],
+                        img=self.imgs["btns"]["sound"]["enabled"],
                         img_hover=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
                         img_pressed=text('Sound on', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0]
                     ),
                     "disabled": Button(
                         gral.scr,
-                        pos=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["red"])[0].get_rect(
+                        pos=self.imgs["btns"]["sound"]["disabled"].get_rect(
                             center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
                         hover_on=True,
-                        img=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["red"])[0],
+                        img=self.imgs["btns"]["sound"]["disabled"],
                         img_hover=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
                         img_pressed=text('Sound off', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0]
                     ),
@@ -262,27 +254,38 @@ class Menu:
             },
             "back": Button(
                 gral.scr,
-                pos=self.txt_btn_back.get_rect(center=(self.pos[0]+self.rect.w*0.5, self.pos[1]+self.rect.h*0.9)),
-                hover_on=True, img=self.txt_btn_back,
+                pos=self.imgs["btns"]["back"].get_rect(center=(self.pos[0]+self.rect.w*0.5, self.pos[1]+self.rect.h*0.9)),
+                hover_on=True, img=self.imgs["btns"]["back"],
                 img_hover=text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
-                img_pressed=text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0])
+                img_pressed=text('Back', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0]),
+            "main_menu": {
+                "resume": Button(
+                    gral.scr, pos=self.imgs["btns"]['resume'].get_rect(
+                        center=(self.pos[0] + self.rect.w * 0.5, self.pos[1] + self.rect.h * 0.1)),
+                    hover_on=True,
+                    img=text('Resume', font_style=gral.font["info"], font_size=30, color=gral.color["black"])[0],
+                    img_hover=text('Resume', font_style=gral.font["info"], font_size=30, color=gral.color["white"])[0],
+                    img_pressed=text('Resume', font_style=gral.font["info"], font_size=30, color=gral.color["grey"])[0]),
+                "save": None,
+                "load": None,
+                "settings": None,
+                "main_menu": None
+            }
         }
-
-        return btns
 
     def display(self):
         if self.active:
-            gral.scr.blit(self.img_bg, self.pos)
+            gral.scr.blit(self.imgs["bg"], self.pos)
             if self.layer == 'main':
                 pass
             elif self.layer == 'load':
-                for socket, btn_bg in self.btns["load"]["bg"]["existent"].items():
-                    if gral.saved_games[socket]:
-                        btn_bg.draw_button()
-                        gral.scr.blit(self.btns["load"]["text"]["img"][socket],
-                                      self.btns["load"]["text"]["pos"][socket])
+                for socket_num in range(1, 5):
+                    if gral.saved_games[socket_num]:
+                        self.btns["load"]["bg"]["existent"][socket_num].draw_button()
+                        gral.scr.blit(self.btns["load"]["text"]["img"][socket_num],
+                                      self.btns["load"]["text"]["pos"][socket_num])
                     else:
-                        self.btns["load"]["bg"]["non_existent"][socket].draw_button()
+                        self.btns["load"]["bg"]["non_existent"][socket_num].draw_button()
                 self.btns["back"].draw_button()
             elif self.layer == 'save':
                 pass
@@ -305,11 +308,13 @@ class Menu:
         with open(f"../saves/save_game{socket}.dgn", "wb") as g:
             pickle.dump(gral.current_game, g)
 
-    @staticmethod
-    def new_game():
+    def new_game(self):
+        new_game = Game()
+
+        gral.current_game = new_game
+
         with open(f"../saves/save_game4.dgn", "wb") as g:
-            pickle.dump(Game(), g)
-            time.sleep(10)
+            pickle.dump(new_game, g)
 
         # sett.current_game['date_time'] = None
         # sett.current_game['current_char'] = None

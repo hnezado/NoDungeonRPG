@@ -1,15 +1,14 @@
 from pygame_utilities import MouseHover, mouse_down, mouse_up, key_down
 import pygame as pg
-import json
+import os
 import general as gral
 
 
 class Controls:
-    def __init__(self):
+    def __init__(self, update):
+        self.update = update
         self.hovering_objs = []
 
-        self.settings_upd = False
-        self.saved_games_upd = False
         self.set_active("main_menu")
 
     def is_hovering(self, mouse_pos, hvr_rect, ms=0):
@@ -53,18 +52,6 @@ class Controls:
         #
         # if self.ingame.ingame_upd:
 
-    def check_updates(self):
-        """Checks if some global variables should be updated (non-event related)"""
-
-        updates = []
-        if self.settings_upd:
-            self.settings_upd = False
-            updates.append("settings")
-        if self.saved_games_upd:
-            self.saved_games_upd = False
-            updates.append("saved_games")
-        return updates
-
     def main(self, event):
         """Main controls manager"""
 
@@ -78,6 +65,8 @@ class Controls:
         self.ctrl_menu(event)
         self.ctrl_main_menu(event)
 
+        self.testing(event)
+
         self.reset_btns(event)
 
     @staticmethod
@@ -89,16 +78,11 @@ class Controls:
             gral.main_menu.active = True
         elif win == 'ingame':
             gral.ingame.active = True
-            pass
 
-    def set_settings(self, setting):
+    def write_settings(self, setting):
         if setting == "sound_switch":
             gral.menu.switch_sound()
-
-        with open('config/settings.json', 'w') as j:
-            json.dump(gral.settings, j)
-
-        self.settings_upd = True
+        self.update(files=["settings"], mode="w")
 
     @staticmethod
     def reset_btns(event):
@@ -118,37 +102,25 @@ class Controls:
 
     def ctrl_confirm_win(self, event):
         if gral.confirm_win.active:
-            if gral.confirm_win.mode == 'main_menu':
-                if mouse_down(event, 1, gral.confirm_win.btns['accept']):
-                    gral.confirm_win.btns['accept'].pressed = True
-                if gral.confirm_win.btns['accept'].pressed:
-                    if mouse_up(event, 1, gral.confirm_win.btns['accept']):
-                        gral.current_game = None
-                        self.set_active("main_menu")
-            elif gral.confirm_win.mode == 'load':
+            if gral.confirm_win.mode == 'load':
                 if mouse_down(event, 1, gral.confirm_win.btns['accept']):
                     gral.confirm_win.btns['accept'].pressed = True
                 if gral.confirm_win.btns['accept'].pressed:
                     if mouse_up(event, 1, gral.confirm_win.btns['accept']):
                         gral.current_game = gral.saved_games[gral.confirm_win.temp_kwargs["socket"]]
-                        gral.confirm_win.clear_temp_kwargs()
+                        gral.confirm_win.close()
                         self.set_active("ingame")
-            elif gral.confirm_win.mode == "save":
-                if mouse_down(event, 1, gral.confirm_win.btns['accept']):
-                    gral.confirm_win.btns['accept'].pressed = True
-                if gral.confirm_win.btns['accept'].pressed:
-                    if mouse_up(event, 1, gral.confirm_win.btns['accept']):
-                        gral.saved_games[gral.confirm_win.temp_kwargs["socket"]] = gral.current_game
-                        gral.confirm_win.clear_temp_kwargs()
-                        self.saved_games_upd = True
             elif gral.confirm_win.mode == 'new_game':
                 if mouse_down(event, 1, gral.confirm_win.btns['accept']):
                     gral.confirm_win.btns['accept'].pressed = True
                 if gral.confirm_win.btns['accept'].pressed:
                     if mouse_up(event, 1, gral.confirm_win.btns['accept']):
                         gral.menu.new_game()
-                        self.saved_games_upd = True
                         gral.confirm_win.close()
+                        print('1º', gral.saved_games)
+                        self.update(["games"])
+                        print('2º', gral.saved_games)
+                        self.set_active("ingame")
             elif gral.confirm_win.mode == 'quit':
                 if mouse_down(event, 1, gral.confirm_win.btns['accept']):
                     gral.confirm_win.btns['accept'].pressed = True
@@ -156,6 +128,20 @@ class Controls:
                     if mouse_up(event, 1, gral.confirm_win.btns['accept']):
                         pg.quit()
                         quit()
+            elif gral.confirm_win.mode == "save":
+                if mouse_down(event, 1, gral.confirm_win.btns['accept']):
+                    gral.confirm_win.btns['accept'].pressed = True
+                if gral.confirm_win.btns['accept'].pressed:
+                    if mouse_up(event, 1, gral.confirm_win.btns['accept']):
+                        gral.saved_games[gral.confirm_win.temp_kwargs["socket"]] = gral.current_game
+                        gral.confirm_win.close()
+            elif gral.confirm_win.mode == 'main_menu':
+                if mouse_down(event, 1, gral.confirm_win.btns['accept']):
+                    gral.confirm_win.btns['accept'].pressed = True
+                if gral.confirm_win.btns['accept'].pressed:
+                    if mouse_up(event, 1, gral.confirm_win.btns['accept']):
+                        gral.current_game = None
+                        self.set_active("main_menu")
             if mouse_down(event, 1, gral.confirm_win.btns['cancel']):
                 gral.confirm_win.btns['cancel'].pressed = True
             if gral.confirm_win.btns['cancel'].pressed:
@@ -191,10 +177,11 @@ class Controls:
                         gral.menu.btns["settings"]["sound"]["disabled"].pressed = True
                 if gral.menu.btns["settings"]["sound"]["enabled"].pressed:
                     if mouse_up(event, 1, gral.menu.btns["settings"]["sound"]["enabled"]):
-                        self.set_settings("sound_switch")
+                        self.write_settings("sound_switch")
+                        self.update(['settings'])
                 if gral.menu.btns["settings"]["sound"]["disabled"].pressed:
                     if mouse_up(event, 1, gral.menu.btns["settings"]["sound"]["disabled"]):
-                        self.set_settings("sound_switch")
+                        self.write_settings("sound_switch")
 
                 if mouse_down(event, 1, gral.menu.btns["back"]):
                     gral.menu.btns["back"].pressed = True
@@ -206,14 +193,17 @@ class Controls:
                 gral.menu.layer = None
                 gral.menu.active = False
 
-    @staticmethod
-    def ctrl_main_menu(event):
+    def ctrl_main_menu(self, event):
         if gral.main_menu.active and not gral.confirm_win.active:
             if mouse_down(event, 1, gral.main_menu.btns["continue"].rect):
                 gral.main_menu.btns["continue"].pressed = True
             if gral.main_menu.btns["continue"].pressed:
                 if mouse_up(event, 1, gral.main_menu.btns["continue"].rect):
+                    # Aquí y en save o load cargar siempre los file_games existentes
+                    self.update(['games'])
+                    gral.menu.update_btns()
                     gral.menu.open("load")
+                    # gral.menu.update_btns()
 
             if mouse_down(event, 1, gral.main_menu.btns["new_game"].rect):
                 gral.main_menu.btns["new_game"].pressed = True
@@ -232,3 +222,14 @@ class Controls:
             if gral.main_menu.btns["quit"].pressed:
                 if mouse_up(event, 1, gral.main_menu.btns["quit"].rect):
                     gral.confirm_win.open('quit')
+
+            if key_down(event, pg.K_ESCAPE):
+                gral.confirm_win.open('quit')
+
+    def testing(self, event):
+        if key_down(event, pg.K_DELETE):
+            try:
+                os.remove('../saves/save_game4.dgn')
+                self.update(["games"])
+            except FileNotFoundError:
+                print('error deleting game')
