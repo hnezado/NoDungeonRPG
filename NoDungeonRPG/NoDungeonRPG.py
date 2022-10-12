@@ -99,7 +99,7 @@ import pickle
 import general as gral
 
 
-def update(files=None, mode='a'):
+def update(files=None, mode='r'):
     """Maintains updated some global variables"""
 
     if mode == "r" or mode == "read":
