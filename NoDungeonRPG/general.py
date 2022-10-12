@@ -30,6 +30,7 @@ default_clock = 60
 timer = 0  # Necesario?
 
 cursor = None
+fader = None
 settings = None
 saved_games = None
 current_game = None

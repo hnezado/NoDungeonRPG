@@ -5,7 +5,6 @@ from map import Map
 
 class Game:
     def __init__(self):
-        self.socket = 0
         self.date_time = None
         self.current_char = Character('Th', 'Warrior')
         self.current_map = Map('Herdion Town')

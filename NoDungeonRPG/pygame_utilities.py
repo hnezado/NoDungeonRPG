@@ -1,5 +1,6 @@
 import pygame as pg
 import pickle as pkl
+import time
 
 
 def savegame(data, filename):
@@ -370,6 +371,48 @@ class BlinkingText:
             blit_alpha(surface, surf, centered_pos, BlinkingText.opacity)
         else:
             blit_alpha(surface, surf, pos, BlinkingText.opacity)
+
+
+class Fader:
+    def __init__(self, scr, size, fade_time=(1000, 1000), pos=(0, 0)):
+        self.scr = scr
+        self.size = size
+        self.veil = pg.Surface(self.size)
+        self.veil.fill((0, 0, 0))
+        self.opacity = 0
+        self.fade_time = fade_time
+
+        self.pos = pos
+        self.active = False
+        self.init_time = 0
+        self.mode = "in"
+
+    def display(self):
+        if self.active:
+            self.veil.set_alpha(self.opacity)
+            self.scr.blit(self.veil, self.pos)
+            self.change_op()
+
+    def start(self):
+        self.active = True
+        self.init_time = time.time()
+
+    def change_op(self):
+        if self.active:
+            passed_time = (time.time() - self.init_time) * 1000
+            if self.mode == "in":
+                self.opacity = 255 / self.fade_time[0] * passed_time
+            elif self.mode == "out":
+                self.opacity = 255 - (255 / self.fade_time[1] * passed_time)
+
+            if self.opacity <= 0:
+                self.opacity = 0
+                self.mode = "in"
+                self.active = False
+            if self.opacity >= 255:
+                self.opacity = 255
+                self.init_time = time.time()
+                self.mode = "out"
 
 
 class MouseHover:

@@ -85,7 +85,7 @@
 #         IOGUI.draw_menu()
 #         IOAtlas.check_transition()
 
-from pygame_utilities import clock
+from pygame_utilities import clock, Fader
 from cursor import *
 from confirm_win import ConfirmWindow
 from menu import Menu
@@ -149,6 +149,7 @@ if __name__ == "__main__":
 
     gral.cursor = Cursor()
     gral.cursor.set_img("data/images/gui/cursor24.png")
+    gral.fader = Fader(gral.scr, gral.scr_dim, fade_time=(2000, 2000))
     gral.confirm_win = ConfirmWindow()
     gral.menu = Menu()
     gral.main_menu = MainMenu()
@@ -157,20 +158,17 @@ if __name__ == "__main__":
 
     gral.menu.update_btns()
 
-    from pygame_utilities import text, merge_surfaces
-
-    print('saved_games:', gral.saved_games)
-
     while True:
 
         for event in pg.event.get():
             gral.controls.main(event)
         update()
 
-        # gral.ingame.display()
+        gral.ingame.display()
         gral.main_menu.display()
         gral.menu.display()
         gral.confirm_win.display()
+        gral.fader.display()
 
         gral.cursor.display()
 

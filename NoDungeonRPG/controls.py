@@ -109,6 +109,8 @@ class Controls:
                     if mouse_up(event, 1, gral.confirm_win.btns['accept']):
                         gral.current_game = gral.saved_games[gral.confirm_win.temp_kwargs["socket"]]
                         gral.confirm_win.close()
+                        gral.menu.close()
+                        gral.fader.start()
                         self.set_active("ingame")
             elif gral.confirm_win.mode == 'new_game':
                 if mouse_down(event, 1, gral.confirm_win.btns['accept']):
@@ -117,10 +119,9 @@ class Controls:
                     if mouse_up(event, 1, gral.confirm_win.btns['accept']):
                         gral.menu.new_game()
                         gral.confirm_win.close()
-                        print('1º', gral.saved_games)
                         self.update(["games"])
-                        print('2º', gral.saved_games)
                         self.set_active("ingame")
+                        gral.fader.start()
             elif gral.confirm_win.mode == 'quit':
                 if mouse_down(event, 1, gral.confirm_win.btns['accept']):
                     gral.confirm_win.btns['accept'].pressed = True
