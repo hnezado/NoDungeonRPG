@@ -8,4 +8,5 @@ class InGame:
 
     def display(self):
         # gral.scr.blit(self.img_gui_bg, (0, 0))
-        gral.map.display()
+        # gral.current_game.map.display()
+        pass
